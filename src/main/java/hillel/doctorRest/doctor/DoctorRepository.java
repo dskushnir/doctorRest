@@ -12,6 +12,16 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class DoctorRepository {
     private final List<Doctor> doctors = new CopyOnWriteArrayList<>();
 
+    private java.util.Optional<Integer> findIndexById(Integer id) {
+        for (int i = 0; i < doctors.size(); i++) {
+            if (doctors.get(i).getId().equals(id)) {
+                return java.util.Optional.of(i);
+            }
+        }
+        return Optional.empty();
+    }
+
+
     public void saveDoctor(Doctor doctor) {
         findIndexById(doctor.getId()).ifPresentOrElse(idx -> {
             throw new IdPredeterminedException();
@@ -21,16 +31,6 @@ public class DoctorRepository {
 
     public List<Doctor> findAll() {
         return doctors;
-    }
-
-
-    private java.util.Optional<Integer> findIndexById(Integer id) {
-        for (int i = 0; i < doctors.size(); i++) {
-            if (doctors.get(i).getId().equals(id)) {
-                return java.util.Optional.of(i);
-            }
-        }
-        return Optional.empty();
     }
 
 
