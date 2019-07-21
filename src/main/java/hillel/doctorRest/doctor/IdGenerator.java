@@ -11,7 +11,7 @@ public class IdGenerator {
 
 
     public Integer generateId() {
-        return id.getAndIncrement()+1;
+        return id.getAndIncrement() + 1;
     }
 
 }

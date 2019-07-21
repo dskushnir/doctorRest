@@ -1,17 +1,15 @@
 package hillel.doctorRest.doctor;
 
 import lombok.AllArgsConstructor;
-import org.apache.coyote.Response;
-import org.apache.el.stream.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.annotation.Resource;
-import java.net.URI;
-import java.net.URISyntaxException;
+
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
@@ -22,64 +20,61 @@ import java.util.stream.Stream;
 
 public class DoctorController {
     private final DoctorService doctorService;
+    private final UriComponentsBuilder uriBuilder = UriComponentsBuilder.newInstance()
+            .scheme("http")
+            .host("localhost")
+            .path("/pets/{id}");
+
+
+    @GetMapping("/doctors")
+    public List<Doctor> findAll(java.util.Optional<String> name,
+                                java.util.Optional<String> specialization) {
+
+        java.util.Optional<Predicate<Doctor>> maybeNamePredicate = name.map(this::filterByName);
+        java.util.Optional<Predicate<Doctor>> maybeSpecializationPredicate = specialization.map(this::filterBySpecialization);
+
+        Predicate<Doctor> predicate = Stream.of(maybeNamePredicate, maybeSpecializationPredicate)
+                .flatMap(Optional::stream)
+                .reduce(Predicate::and)
+                .orElse(doctor -> true);
+
+        return doctorService.findAll(predicate);
+    }
+
+    private Predicate<Doctor> filterByName(String letter) {
+        return doctor -> doctor.getName().startsWith(letter);
+    }
+
+    private Predicate<Doctor> filterBySpecialization(String specialization) {
+        return doctor -> doctor.getSpecialization().equals(specialization);
+    }
 
 
     @GetMapping("/doctors/{id}")
     public Doctor findById(@PathVariable Integer id) {
-        var mayBeDoctor = doctorService.findById(id);
+        var mayBeDoctor = doctorService.findById(id); // Why  val isn't generating?
         return mayBeDoctor.orElseThrow(DoctorNotFoundException::new);
 
     }
 
-    @GetMapping("/doctors")
-    public List<Doctor> findAll() {
-        return doctorService.findAll();
-    }
-
-
-
-   @GetMapping  (value = "/doctors",params = {"specialization=surgeon"})//(value = "/doctors",params = {"specialization=surgeon"})
-    public List<Doctor> findBySpecialization(@RequestParam("specialization")String specialization)  {
-
-        return doctorService.findBySpecialization(specialization);
-    }
-
-   @GetMapping  ( "/doctors")
-
-    public  List<Doctor> findByLetter(@RequestParam (name = "A.+")String name) {
-
-        return doctorService.findByFirstLetterName(name);
-    }
-
-
-
-
-
-@PostMapping("/doctors")
+    @PostMapping("/doctors")
     public ResponseEntity<Object> createDoctor(@RequestBody Doctor doctor) {
 
-    try {
-        doctorService.saveDoctor(doctor);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("doctors//{id}")
+        try {
+            doctorService.saveDoctor(doctor);
+      /* URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("//{id}")
                 .buildAndExpand(doctor.getId()).toUri();
-        return ResponseEntity.created(location).body(location);
-    } catch (IdPredeterminedException e) {
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.created(location).body(location);*/    // Could this decision be right?
+
+            return ResponseEntity.created(uriBuilder.build(doctor.getId())).build();
+        } catch (IdPredeterminedException e) {
+            return ResponseEntity.badRequest().build();
+        }
     }
-}
-
-
-
-
-
-
-
-
-
 
     @PutMapping("/doctors/{id}")
     public ResponseEntity<?> updateDoctor(@RequestBody Doctor doctor,
-                                       @PathVariable Integer id) {
+                                          @PathVariable Integer id) {
         if (!doctor.getId().equals(id)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
@@ -92,14 +87,50 @@ public class DoctorController {
     }
 
     @DeleteMapping("/doctors/{id}")
-    public ResponseEntity<?>deleteDoctor(@PathVariable Integer id){
+    public ResponseEntity<?> deleteDoctor(@PathVariable Integer id) {
         try {
             doctorService.delete(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }catch  (NoSuchDoctorException e) {
+        } catch (NoSuchDoctorException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
     }
 }
+
+
+ /*  @GetMapping("/doctors")
+    public List<Doctor> findAll() {
+        return doctorService.findAll();
+    }*/
+
+/*
+   @GetMapping  (value = "/doctors",params = {"specialization=surgeon"})//(value = "/doctors",params = {"specialization=surgeon"})
+    public List<Doctor> findBySpecialization(@RequestParam("specialization")String specialization)  {
+
+        return doctorService.findBySpecialization(specialization); Return surgeons
+    }
+    @GetMapping  (value = "/doctors",params = {"name={A.]+"})// or "name=A.+"
+    public List<Doctor> findByName(@RequestParam("name")String name)  {
+
+        return doctorService.findByFirstLetterName(name); Return all doctors
+    }*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -1,8 +1,4 @@
 package hillel.doctorRest.doctor;
 
-
-
-
-
-public class IdPredeterminedException extends RuntimeException{
+public class IdPredeterminedException extends RuntimeException {
 }

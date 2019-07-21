@@ -5,14 +5,22 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Collectors;
+
 
 @Repository
 
 public class DoctorRepository {
     private final List<Doctor> doctors = new CopyOnWriteArrayList<>();
 
-    {
+    public void saveDoctor(Doctor doctor) {
+        findIndexById(doctor.getId()).ifPresentOrElse(idx -> {
+            throw new IdPredeterminedException();
+        }, () -> doctors
+                .add(doctor));
+    }
+
+    public List<Doctor> findAll() {
+        return doctors;
     }
 
 
@@ -25,42 +33,11 @@ public class DoctorRepository {
         return Optional.empty();
     }
 
-    public void saveDoctor(Doctor doctor) {
-        findIndexById(doctor.getId()).ifPresentOrElse(idx ->
-        {
-            throw new IdPredeterminedException();
-        }, () -> doctors.add(doctor))
-
-
-        ;
-    }
 
     public Optional<Doctor> findById(Integer id) {
         return doctors.stream()
                 .filter(it -> it.getId().equals(id))
                 .findFirst();
-    }
-
-    public List<Doctor> findBySpecialization(String specialization) {
-        return doctors.stream().filter(it -> it.getSpecialization().
-                equalsIgnoreCase(specialization)).
-                collect(Collectors.toList());
-
-    }
-   /* public List<Doctor>findByFirstLetterName(char ch){
-        return doctors.stream().filter(it->it.getName().
-                charAt(0)==ch).collect(Collectors.toList());
-    }*/
-
-    public List<Doctor> findByFirstLetterName(String name) {
-        return doctors.stream().filter(it -> it.getName().
-                equalsIgnoreCase(name)).
-                collect(Collectors.toList());
-    }
-
-
-    public List<Doctor> findAll() {
-        return doctors;
     }
 
 
@@ -77,6 +54,22 @@ public class DoctorRepository {
             throw new NoSuchDoctorException();
         });
     }
-
-
 }
+
+
+
+     /*  public List<Doctor> findBySpecialization(String specialization) {
+        return doctors.stream().filter(it -> it.getSpecialization().
+                equalsIgnoreCase(specialization)).
+                collect(Collectors.toList());
+
+    }
+
+    public List<Doctor> findByFirstLetterName(String name) {
+        return doctors.stream().filter(it -> it.getName().
+                equalsIgnoreCase(name)).
+                collect(Collectors.toList());
+    }*/
+
+
+
