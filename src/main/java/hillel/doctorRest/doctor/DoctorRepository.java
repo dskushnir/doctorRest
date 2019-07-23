@@ -13,11 +13,7 @@ public class DoctorRepository {
     private final AtomicInteger counter = new AtomicInteger();
 
 
-  /*  public void saveDoctor(Doctor doctor) {
-        findIndexById(doctor.getId()).ifPresentOrElse(idx -> {
-            throw new IdPredeterminedException();
-        }, () -> doctors.add(doctor));
-    }*/
+
 
     public List<Doctor> findAll() {
         return new ArrayList<>(idToDoctor.values());
@@ -30,14 +26,7 @@ public class DoctorRepository {
 
 
 
-   /* private java.util.Optional<Integer> findIndexById(Integer id) {
-        for (int i = 0; i < doctors.size(); i++) {
-            if (doctors.get(i).getId().equals(id)) {
-                return java.util.Optional.of(i);
-            }
-        }
-        return Optional.empty();
-    }*/
+
 
     public Optional<Doctor> findById(Integer id) {
         return Optional.ofNullable(idToDoctor.get(id));
