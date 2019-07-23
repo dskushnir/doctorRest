@@ -12,17 +12,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class DoctorService {
     private final DoctorRepository doctorRepository;
-    private final IdGenerator idGenerator = new IdGenerator();
-
-
-    public Doctor createDoctor(String name, String specialization) {
-        return new Doctor(idGenerator.generateId(), name, specialization);
-    }
-
-    public void saveDoctor(Doctor doctor) {
-        doctorRepository.saveDoctor(createDoctor(doctor.getName(),
-                doctor.getSpecialization()));
-    }
 
     public List<Doctor> findAll(Predicate<Doctor> predicate) {
         return doctorRepository.findAll().stream()
@@ -32,6 +21,9 @@ public class DoctorService {
 
     public Optional<Doctor> findById(Integer id) {
         return doctorRepository.findById(id);
+    }
+    public Doctor createDoctor (Doctor doctor) {
+        return doctorRepository.create(doctor);
     }
 
     public void update(Doctor doctor) {

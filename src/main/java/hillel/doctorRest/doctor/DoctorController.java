@@ -1,5 +1,7 @@
 package hillel.doctorRest.doctor;
 
+import hillel.doctorRest.doctor.dto.DoctorDtoConverter;
+import hillel.doctorRest.doctor.dto.DoctorInputDto;
 import lombok.AllArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,7 @@ import java.util.stream.Stream;
 @AllArgsConstructor
 public class DoctorController {
     private final DoctorService doctorService;
+    private final DoctorDtoConverter doctorDtoConverter;
     private final UriComponentsBuilder uriBuilder = UriComponentsBuilder.newInstance()
             .scheme("http")
             .host("localhost")
@@ -50,22 +53,23 @@ public class DoctorController {
     }
 
     @PostMapping("/doctors")
-    public ResponseEntity<Object> createDoctor(@RequestBody Doctor doctor) {
+    public ResponseEntity<Object> createDoctor(@RequestBody DoctorInputDto dto) {
         try {
-            doctorService.saveDoctor(doctor);
-            return ResponseEntity.created(uriBuilder.build(doctor.getId())).build();
+          val created =doctorService.createDoctor(doctorDtoConverter.toModel(dto));
+            return ResponseEntity.created(uriBuilder.build(created.getId())).build();
         } catch (IdPredeterminedException e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
     @PutMapping("/doctors/{id}")
-    public ResponseEntity<?> updateDoctor(@RequestBody Doctor doctor,
+    public ResponseEntity<?> updateDoctor(@RequestBody DoctorInputDto dto,
                                           @PathVariable Integer id) {
-        if (!doctor.getId().equals(id)) {
+        if (!dto.getId().equals(id)) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         try {
+            val doctor = doctorDtoConverter.toModel(dto, id);
             doctorService.update(doctor);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (NoSuchDoctorException e) {
