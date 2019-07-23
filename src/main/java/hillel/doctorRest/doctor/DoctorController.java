@@ -1,17 +1,18 @@
 package hillel.doctorRest.doctor;
 
 import lombok.AllArgsConstructor;
+import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import org.springframework.web.util.UriComponentsBuilder;
 
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.regex.Pattern;
+
 import java.util.stream.Stream;
 
 @RestController
@@ -30,8 +31,10 @@ public class DoctorController {
     public List<Doctor> findAll(java.util.Optional<String> name,
                                 java.util.Optional<String> specialization) {
 
-        java.util.Optional<Predicate<Doctor>> maybeNamePredicate = name.map(this::filterByName);
-        java.util.Optional<Predicate<Doctor>> maybeSpecializationPredicate = specialization.map(this::filterBySpecialization);
+        java.util.Optional<Predicate<Doctor>> maybeNamePredicate = name
+                .map(this::filterByName);
+        java.util.Optional<Predicate<Doctor>> maybeSpecializationPredicate = specialization
+                .map(this::filterBySpecialization);
 
         Predicate<Doctor> predicate = Stream.of(maybeNamePredicate, maybeSpecializationPredicate)
                 .flatMap(Optional::stream)
@@ -52,7 +55,7 @@ public class DoctorController {
 
     @GetMapping("/doctors/{id}")
     public Doctor findById(@PathVariable Integer id) {
-        var mayBeDoctor = doctorService.findById(id); // Why  val isn't generating?
+        val mayBeDoctor = doctorService.findById(id); // Why  val isn't generating?
         return mayBeDoctor.orElseThrow(DoctorNotFoundException::new);
 
     }
@@ -62,9 +65,7 @@ public class DoctorController {
 
         try {
             doctorService.saveDoctor(doctor);
-      /* URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("//{id}")
-                .buildAndExpand(doctor.getId()).toUri();
-        return ResponseEntity.created(location).body(location);*/    // Could this decision be right?
+
 
             return ResponseEntity.created(uriBuilder.build(doctor.getId())).build();
         } catch (IdPredeterminedException e) {
@@ -97,25 +98,6 @@ public class DoctorController {
 
     }
 }
-
-
- /*  @GetMapping("/doctors")
-    public List<Doctor> findAll() {
-        return doctorService.findAll();
-    }*/
-
-/*
-   @GetMapping  (value = "/doctors",params = {"specialization=surgeon"})//(value = "/doctors",params = {"specialization=surgeon"})
-    public List<Doctor> findBySpecialization(@RequestParam("specialization")String specialization)  {
-
-        return doctorService.findBySpecialization(specialization); Return surgeons
-    }
-    @GetMapping  (value = "/doctors",params = {"name={A.]+"})// or "name=A.+"
-    public List<Doctor> findByName(@RequestParam("name")String name)  {
-
-        return doctorService.findByFirstLetterName(name); Return all doctors
-    }*/
-
 
 
 
