@@ -12,16 +12,11 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class DoctorService {
     private final DoctorRepository doctorRepository;
-    private final IdGenerator idGenerator = new IdGenerator();
 
-
-    public Doctor createDoctor(String name, String specialization) {
-        return new Doctor(idGenerator.generateId(), name, specialization);
-    }
-
-    public void saveDoctor(Doctor doctor) {
-        doctorRepository.saveDoctor(createDoctor(doctor.getName(),
-                doctor.getSpecialization()));
+    public void createDoctor(Doctor doctor) {
+        doctorRepository.findIndexById(doctor.getId()).ifPresentOrElse(idx -> {
+            throw new IdPredeterminedException();
+        }, () -> doctorRepository.createDoctor(doctor));
     }
 
     public List<Doctor> findAll(Predicate<Doctor> predicate) {

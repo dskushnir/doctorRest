@@ -1,11 +1,21 @@
 package hillel.doctorRest.doctor;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder(toBuilder = true)
+
+
 public class Doctor {
-    private final Integer id;
-    private final String name;
-    private final String specialization;
+
+    private  Integer id;
+    private  String name;
+    private  String specialization;
 }
 

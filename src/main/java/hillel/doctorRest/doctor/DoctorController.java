@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
-
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -46,14 +46,14 @@ public class DoctorController {
 
     @GetMapping("/doctors/{id}")
     public Doctor findById(@PathVariable Integer id) {
-        val mayBeDoctor = doctorService.findById(id); // Why  val isn't generating?
+        val mayBeDoctor = doctorService.findById(id);
         return mayBeDoctor.orElseThrow(DoctorNotFoundException::new);
     }
 
     @PostMapping("/doctors")
-    public ResponseEntity<Object> createDoctor(@RequestBody Doctor doctor) {
+    public ResponseEntity<Object> createDoctor(@Valid @RequestBody Doctor doctor) {
         try {
-            doctorService.saveDoctor(doctor);
+            doctorService.createDoctor(doctor);
             return ResponseEntity.created(uriBuilder.build(doctor.getId())).build();
         } catch (IdPredeterminedException e) {
             return ResponseEntity.badRequest().build();
@@ -82,7 +82,6 @@ public class DoctorController {
         } catch (NoSuchDoctorException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-
     }
 }
 
