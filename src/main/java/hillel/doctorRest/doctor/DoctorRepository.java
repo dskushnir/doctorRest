@@ -13,8 +13,7 @@ public class DoctorRepository {
     public void saveDoctor(Doctor doctor) {
         findIndexById(doctor.getId()).ifPresentOrElse(idx -> {
             throw new IdPredeterminedException();
-        }, () -> doctors
-                .add(doctor));
+        }, () -> doctors.add(doctor));
     }
 
     public List<Doctor> findAll() {
@@ -40,7 +39,6 @@ public class DoctorRepository {
 
 
     public void update(Doctor doctor) {
-
         findIndexById(doctor.getId()).
                 ifPresentOrElse(idx -> doctors.set(idx, doctor), () -> {
                     throw new NoSuchDoctorException();
@@ -48,9 +46,11 @@ public class DoctorRepository {
     }
 
     public void delete(Integer id) {
-        findIndexById(id).ifPresentOrElse(idx -> doctors.remove(idx.intValue()), () -> {
-            throw new NoSuchDoctorException();
-        });
+        findIndexById(id)
+                .ifPresentOrElse(idx -> doctors
+                        .remove(idx.intValue()), () -> {
+                    throw new NoSuchDoctorException();
+                });
     }
 }
 
