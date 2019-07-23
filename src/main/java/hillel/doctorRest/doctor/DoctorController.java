@@ -48,7 +48,7 @@ public class DoctorController {
 
     @GetMapping("/doctors/{id}")
     public Doctor findById(@PathVariable Integer id) {
-        val mayBeDoctor = doctorService.findById(id); // Why  val isn't generating?
+        val mayBeDoctor = doctorService.findById(id);
         return mayBeDoctor.orElseThrow(DoctorNotFoundException::new);
     }
 

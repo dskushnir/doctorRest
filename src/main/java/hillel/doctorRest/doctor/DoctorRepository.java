@@ -13,19 +13,15 @@ public class DoctorRepository {
     private final AtomicInteger counter = new AtomicInteger();
 
 
-
-
     public List<Doctor> findAll() {
         return new ArrayList<>(idToDoctor.values());
     }
+
     public Doctor create(Doctor doctor) {
         Doctor created = doctor.toBuilder().id(counter.incrementAndGet()).build();
         idToDoctor.put(created.getId(), created);
         return created;
     }
-
-
-
 
 
     public Optional<Doctor> findById(Integer id) {
@@ -41,6 +37,7 @@ public class DoctorRepository {
         idToDoctor.remove(id);
 
     }
+
     public void deleteAll() {
         idToDoctor.clear();
     }
