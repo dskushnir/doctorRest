@@ -1,14 +1,12 @@
 package hillel.doctorRest.doctor;
 
-
 import org.springframework.stereotype.Repository;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-
 @Repository
-
 public class DoctorRepository {
     private final List<Doctor> doctors = new CopyOnWriteArrayList<>();
 
@@ -58,18 +56,6 @@ public class DoctorRepository {
 
 
 
-     /*  public List<Doctor> findBySpecialization(String specialization) {
-        return doctors.stream().filter(it -> it.getSpecialization().
-                equalsIgnoreCase(specialization)).
-                collect(Collectors.toList());
-
-    }
-
-    public List<Doctor> findByFirstLetterName(String name) {
-        return doctors.stream().filter(it -> it.getName().
-                equalsIgnoreCase(name)).
-                collect(Collectors.toList());
-    }*/
 
 
 
