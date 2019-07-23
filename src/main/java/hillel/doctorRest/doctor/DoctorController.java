@@ -21,21 +21,17 @@ public class DoctorController {
             .host("localhost")
             .path("/pets/{id}");
 
-
     @GetMapping("/doctors")
     public List<Doctor> findAll(java.util.Optional<String> name,
                                 java.util.Optional<String> specialization) {
-
         java.util.Optional<Predicate<Doctor>> maybeNamePredicate = name
                 .map(this::filterByName);
         java.util.Optional<Predicate<Doctor>> maybeSpecializationPredicate = specialization
                 .map(this::filterBySpecialization);
-
         Predicate<Doctor> predicate = Stream.of(maybeNamePredicate, maybeSpecializationPredicate)
                 .flatMap(Optional::stream)
                 .reduce(Predicate::and)
                 .orElse(doctor -> true);
-
         return doctorService.findAll(predicate);
     }
 
@@ -47,21 +43,16 @@ public class DoctorController {
         return doctor -> doctor.getSpecialization().equals(specialization);
     }
 
-
     @GetMapping("/doctors/{id}")
     public Doctor findById(@PathVariable Integer id) {
         val mayBeDoctor = doctorService.findById(id); // Why  val isn't generating?
         return mayBeDoctor.orElseThrow(DoctorNotFoundException::new);
-
     }
 
     @PostMapping("/doctors")
     public ResponseEntity<Object> createDoctor(@RequestBody Doctor doctor) {
-
         try {
             doctorService.saveDoctor(doctor);
-
-
             return ResponseEntity.created(uriBuilder.build(doctor.getId())).build();
         } catch (IdPredeterminedException e) {
             return ResponseEntity.badRequest().build();

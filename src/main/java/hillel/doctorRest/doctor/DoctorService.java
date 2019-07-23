@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-
 public class DoctorService {
     private final DoctorRepository doctorRepository;
     private final IdGenerator idGenerator = new IdGenerator();

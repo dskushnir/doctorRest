@@ -20,7 +20,6 @@ public class DoctorRepository {
         return doctors;
     }
 
-
     private java.util.Optional<Integer> findIndexById(Integer id) {
         for (int i = 0; i < doctors.size(); i++) {
             if (doctors.get(i).getId().equals(id)) {
@@ -30,13 +29,11 @@ public class DoctorRepository {
         return Optional.empty();
     }
 
-
     public Optional<Doctor> findById(Integer id) {
         return doctors.stream()
                 .filter(it -> it.getId().equals(id))
                 .findFirst();
     }
-
 
     public void update(Doctor doctor) {
         findIndexById(doctor.getId()).
