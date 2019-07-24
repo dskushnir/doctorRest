@@ -59,7 +59,7 @@ public class DoctorController {
         return doctor -> doctor.getId().equals(id);
     }
 
-    @GetMapping("/doctors")
+  /*  @GetMapping("/doctors")
     public List<DoctorOutputDto> findParameter(DoctorOutputDto outputDto, Optional<Integer>id, Optional<String>name, Optional<String>specialization) {
 
         java.util.Optional<Predicate<Doctor>> maybeIdPredicate = id
@@ -110,7 +110,7 @@ public class DoctorController {
     }*/
 
 
-    }
+
 
     @PostMapping("/doctors")
     public ResponseEntity<Object> createDoctor(@RequestBody DoctorInputDto dto) {
