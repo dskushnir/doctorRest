@@ -19,9 +19,10 @@ public class DoctorService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<Doctor> findById(Integer id) {
+
+  /* public Optional<Doctor> findById(Integer id) {
         return doctorRepository.findById(id);
-    }
+    }*/
     public Doctor createDoctor (Doctor doctor) {
         return doctorRepository.create(doctor);
     }
