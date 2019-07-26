@@ -92,8 +92,7 @@ public class DoctorControllerTest {
         doctorRepository.create(new Doctor(null, "Adam", "therapy"));
         doctorRepository.create(new Doctor(null, "Alex", "therapy"));
         mockMvc.perform(MockMvcRequestBuilders.get("/doctors").param("specialization", "surgeon"))
-                .andExpect(MockMvcResultMatchers.status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(0)));
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
