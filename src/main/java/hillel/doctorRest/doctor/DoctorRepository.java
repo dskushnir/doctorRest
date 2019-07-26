@@ -4,14 +4,12 @@ import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
 public class DoctorRepository {
     private final Map<Integer, Doctor> idToDoctor = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger();
-
 
     public List<Doctor> findAll() {
         return new ArrayList<>(idToDoctor.values());
@@ -23,26 +21,28 @@ public class DoctorRepository {
         return created;
     }
 
-
-
-
     public Optional<Doctor> findById(Integer id) {
         return Optional.ofNullable(idToDoctor.get(id));
     }
 
     public void update(Doctor doctor) {
-        idToDoctor.replace(doctor.getId(), doctor);
+        findById(doctor.getId()).
+                ifPresentOrElse(idx -> idToDoctor.replace(doctor.getId(), doctor), () -> {
+                    throw new NoSuchDoctorException();
+                });
     }
 
-
     public void delete(Integer id) {
-        idToDoctor.remove(id);
-
+        findById(id).ifPresentOrElse(idx -> idToDoctor.remove(id), () -> {
+            throw new NoSuchDoctorException();
+        });
     }
 
     public void deleteAll() {
         idToDoctor.clear();
     }
+
+
 }
 
 

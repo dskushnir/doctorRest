@@ -1,0 +1,14 @@
+[
+  {
+    "name": "Jack",
+    "specialization": "therapy"
+  },
+  {
+    "name": "Adam",
+    "specialization": "therapy"
+  },
+  {
+    "name": "Alex",
+    "specialization": "surgeon"
+  }
+]
