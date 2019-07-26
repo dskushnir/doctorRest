@@ -21,6 +21,7 @@ public class DoctorService {
     private Predicate<Doctor> filterByFirstLatterName(String letter) {
         return doctor -> doctor.getName().startsWith(letter);
     }
+
     private Predicate<Doctor> filterDyName(String name) {
         return doctor -> doctor.getName().equalsIgnoreCase(name);
     }
@@ -34,8 +35,9 @@ public class DoctorService {
                 .filter(predicate)
                 .collect(Collectors.toList());
     }
-    public Predicate<Doctor> predicate (java.util.Optional<Integer> id, java.util.Optional<String> nameLetter,
-                                      java.util.Optional<String> name, java.util.Optional<String> specialization) {
+
+    public Predicate<Doctor> predicate(java.util.Optional<Integer> id, java.util.Optional<String> nameLetter,
+                                       java.util.Optional<String> name, java.util.Optional<String> specialization) {
         java.util.Optional<Predicate<Doctor>> maybeIdPredicate = id
                 .map(this::filterById);
         java.util.Optional<Predicate<Doctor>> maybeNamePredicate = name
@@ -44,13 +46,13 @@ public class DoctorService {
                 .map(this::filterByFirstLatterName);
         java.util.Optional<Predicate<Doctor>> maybeSpecializationPredicate = specialization
                 .map(this::filterBySpecialization);
-     return Stream.of(maybeIdPredicate, maybeNamePredicate, maybeByFirstLatterNamePredicate, maybeSpecializationPredicate)
+        return Stream.of(maybeIdPredicate, maybeNamePredicate, maybeByFirstLatterNamePredicate, maybeSpecializationPredicate)
                 .flatMap(Optional::stream)
                 .reduce(Predicate::and)
                 .orElse(doctor -> true);
     }
 
-    public Doctor createDoctor (Doctor doctor) {
+    public Doctor createDoctor(Doctor doctor) {
         return doctorRepository.create(doctor);
     }
 

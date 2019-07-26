@@ -41,8 +41,6 @@ public class DoctorRepository {
     public void deleteAll() {
         idToDoctor.clear();
     }
-
-
 }
 
 
