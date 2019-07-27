@@ -43,7 +43,7 @@ public class DoctorControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isCreated())
                 .andExpect(MockMvcResultMatchers.header().string("location", Matchers.containsString("http://localhost/doctors/")))
                 .andReturn().getResponse();
-        Integer id = Integer.parseInt(response.getHeader("location").replace("http://localhost/doctors/", ""));
+        Integer id = Integer.parseInt(response.getHeader("location").replace("http://localhost/doctors/", " "));
         Assertions.assertThat(doctorRepository.findById(id)).isPresent();
     }
 
@@ -97,22 +97,22 @@ public class DoctorControllerTest {
 
     @Test
     public void shouldUpdateDoctor() throws Exception {
-        doctorRepository.create(new Doctor(null, "Jack", "therapy"));
-        Integer id = 6;
-        mockMvc.perform(MockMvcRequestBuilders.put("/doctors/{id}", id)
-                .contentType("application/json")
-                .content(fromResource("doctor/update-doctor.json")))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
-    }
-
-    @Test
-    public void shouldUpdateDoctorNoFoundId() throws Exception {
         Integer id = doctorRepository.create(new Doctor(null, "Jack", "therapy")).getId();
         mockMvc.perform(MockMvcRequestBuilders.put("/doctors/{id}", id)
                 .contentType("application/json")
                 .content(fromResource("doctor/update-doctor.json")))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
         Assertions.assertThat(doctorRepository.findById(id).get().getSpecialization()).isEqualTo("surgeon");
+    }
+
+    @Test
+    public void shouldUpdateDoctorNoFoundId() throws Exception {
+        doctorRepository.create(new Doctor(null, "Jack", "therapy"));
+        Integer id = 6;
+        mockMvc.perform(MockMvcRequestBuilders.put("/doctors/{id}", id)
+                .contentType("application/json")
+                .content(fromResource("doctor/update-doctor.json")))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
