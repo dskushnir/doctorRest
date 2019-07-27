@@ -17,9 +17,6 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.util.regex.Matcher;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -59,13 +56,16 @@ public class DoctorControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", Matchers.is("Jack")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].name", Matchers.is("Adam")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].name", Matchers.is("Alex")))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[9].id", Matchers.notNullValue()))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].specialization", Matchers.is("therapy")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].specialization", Matchers.is("therapy")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].specialization", Matchers.is("surgeon")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Matchers.notNullValue()))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].id", Matchers.notNullValue()))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id", Matchers.notNullValue()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$[2].id", Matchers.notNullValue()));
     }
 
     @Test
-    public void shouldReturnDyNameJack() throws Exception {
+    public void shouldReturnByNameJack() throws Exception {
         doctorRepository.create(new Doctor(null, "Jack", "therapy"));
         doctorRepository.create(new Doctor(null, "Adam", "therapy"));
         doctorRepository.create(new Doctor(null, "Alex", "surgeon"));
@@ -74,9 +74,16 @@ public class DoctorControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", Matchers.is("Jack")));
     }
-
     @Test
-    public void shouldReturnDySpecializationAlex() throws Exception {
+    public void shouldReturnById()throws Exception{
+        Integer id = doctorRepository.create(new Doctor(null, "Jack", "therapy")).getId();
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctors/{id}", id))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", Matchers.is("Jack")));
+    }
+    @Test
+    public void shouldReturnBySpecializationAlex() throws Exception {
         doctorRepository.create(new Doctor(null, "Jack", "therapy"));
         doctorRepository.create(new Doctor(null, "Adam", "therapy"));
         doctorRepository.create(new Doctor(null, "Alex", "surgeon"));
@@ -87,7 +94,7 @@ public class DoctorControllerTest {
     }
 
     @Test
-    public void shouldReturnDySpecializationNoFound() throws Exception {
+    public void shouldReturnBySpecializationNoFound() throws Exception {
         doctorRepository.create(new Doctor(null, "Jack", "therapy"));
         doctorRepository.create(new Doctor(null, "Adam", "therapy"));
         doctorRepository.create(new Doctor(null, "Alex", "therapy"));
@@ -100,7 +107,7 @@ public class DoctorControllerTest {
         Integer id = doctorRepository.create(new Doctor(null, "Jack", "therapy")).getId();
         mockMvc.perform(MockMvcRequestBuilders.put("/doctors/{id}", id)
                 .contentType("application/json")
-                .content(fromResource("doctor/update-doctor.json")))
+                .content(fromResource("doctor/update-doctors.json")))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
         Assertions.assertThat(doctorRepository.findById(id).get().getSpecialization()).isEqualTo("surgeon");
     }
@@ -111,7 +118,7 @@ public class DoctorControllerTest {
         Integer id = 6;
         mockMvc.perform(MockMvcRequestBuilders.put("/doctors/{id}", id)
                 .contentType("application/json")
-                .content(fromResource("doctor/update-doctor.json")))
+                .content(fromResource("doctor/update-doctors.json")))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
