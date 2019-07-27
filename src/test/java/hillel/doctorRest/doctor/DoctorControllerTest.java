@@ -69,19 +69,21 @@ public class DoctorControllerTest {
         doctorRepository.create(new Doctor(null, "Jack", "therapy"));
         doctorRepository.create(new Doctor(null, "Adam", "therapy"));
         doctorRepository.create(new Doctor(null, "Alex", "surgeon"));
-        mockMvc.perform(MockMvcRequestBuilders.get("/pets").param("name", "Jack"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctors").param("name", "Jack"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", Matchers.is("Jack")));
     }
+
     @Test
-    public void shouldReturnById()throws Exception{
+    public void shouldReturnById() throws Exception {
         Integer id = doctorRepository.create(new Doctor(null, "Jack", "therapy")).getId();
         mockMvc.perform(MockMvcRequestBuilders.get("/doctors/{id}", id))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", Matchers.is("Jack")));
     }
+
     @Test
     public void shouldReturnBySpecializationAlex() throws Exception {
         doctorRepository.create(new Doctor(null, "Jack", "therapy"));
@@ -103,16 +105,6 @@ public class DoctorControllerTest {
     }
 
     @Test
-    public void shouldUpdateDoctor() throws Exception {
-        Integer id = doctorRepository.create(new Doctor(null, "Jack", "therapy")).getId();
-        mockMvc.perform(MockMvcRequestBuilders.put("/doctors/{id}", id)
-                .contentType("application/json")
-                .content(fromResource("doctor/update-doctors.json")))
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
-        Assertions.assertThat(doctorRepository.findById(id).get().getSpecialization()).isEqualTo("surgeon");
-    }
-
-    @Test
     public void shouldUpdateDoctorNoFoundId() throws Exception {
         doctorRepository.create(new Doctor(null, "Jack", "therapy"));
         Integer id = 6;
@@ -120,6 +112,16 @@ public class DoctorControllerTest {
                 .contentType("application/json")
                 .content(fromResource("doctor/update-doctors.json")))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void shouldUpdateDoctor() throws Exception {
+        Integer id = doctorRepository.create(new Doctor(null, "Jack", "therapy")).getId();
+        mockMvc.perform(MockMvcRequestBuilders.put("/doctors/{id}", id)
+                .contentType("application/json")
+                .content(fromResource("doctor/update-doctors.json")))
+                .andExpect(MockMvcResultMatchers.status().isNoContent());
+        Assertions.assertThat(doctorRepository.findById(id).get().getSpecialization()).isEqualTo("surgeon");
     }
 
     @Test
