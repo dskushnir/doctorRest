@@ -29,7 +29,7 @@ public class DoctorController {
 
     @GetMapping("/doctors")
     public List<DoctorOutputDto> findAll(Optional<Integer> id, java.util.Optional<String> nameLetter,
-                                               java.util.Optional<String> name, java.util.Optional<String> specialization) {
+                                         java.util.Optional<String> name, java.util.Optional<String> specialization) {
         val doctors = doctorService.findAll(doctorService.predicate(id, nameLetter, name, specialization));
         if (doctors.size() == 0) {
             throw new DoctorNotFoundException();
