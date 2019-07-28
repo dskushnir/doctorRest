@@ -36,8 +36,10 @@ public class DoctorService {
                 .collect(Collectors.toList());
     }
 
-    public Predicate<Doctor> predicate(java.util.Optional<Integer> id, java.util.Optional<String> nameLetter,
-                                       java.util.Optional<String> name, java.util.Optional<String> specialization) {
+    public Predicate<Doctor> predicate(java.util.Optional<Integer> id,
+                                       java.util.Optional<String> nameLetter,
+                                       java.util.Optional<String> name,
+                                       java.util.Optional<String> specialization) {
         java.util.Optional<Predicate<Doctor>> maybeIdPredicate = id
                 .map(this::filterById);
         java.util.Optional<Predicate<Doctor>> maybeNamePredicate = name

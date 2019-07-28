@@ -28,8 +28,10 @@ public class DoctorController {
             .path("/doctors/{id}");
 
     @GetMapping("/doctors")
-    public List<DoctorOutputDto> findAll(Optional<Integer> id, java.util.Optional<String> nameLetter,
-                                         java.util.Optional<String> name, java.util.Optional<String> specialization) {
+    public List<DoctorOutputDto> findAll(Optional<Integer> id,
+                                         java.util.Optional<String> nameLetter,
+                                         java.util.Optional<String> name,
+                                         java.util.Optional<String> specialization) {
         val doctors = doctorService.findAll(doctorService.predicate(id, nameLetter, name, specialization));
         if (doctors.size() == 0) {
             throw new DoctorNotFoundException();
@@ -58,11 +60,9 @@ public class DoctorController {
     }
 
     @DeleteMapping("/doctors/{id}")
-    public ResponseEntity<?> deleteDoctor(@RequestBody DoctorInputDto dto,
-                                          @PathVariable Integer id) {
-        val doctor = doctorDtoConverter.toModel(dto, id);
+    public ResponseEntity<?> deleteDoctor(@PathVariable Integer id) {
         try {
-            doctorService.delete(doctor.getId());
+            doctorService.delete(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch (NoSuchDoctorException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

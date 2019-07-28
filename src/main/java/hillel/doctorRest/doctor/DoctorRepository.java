@@ -11,6 +11,7 @@ public class DoctorRepository {
     private final Map<Integer, Doctor> idToDoctor = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger();
 
+
     public List<Doctor> findAll() {
         return new ArrayList<>(idToDoctor.values());
     }
