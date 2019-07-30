@@ -1,4 +1,4 @@
-package hillel.doctorRest.doctor;
+package hillel.doctorRest.clinic.doctor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;

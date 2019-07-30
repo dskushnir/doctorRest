@@ -1,4 +1,4 @@
-package hillel.doctorRest.doctor;
+package hillel.doctorRest.clinic.doctor;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

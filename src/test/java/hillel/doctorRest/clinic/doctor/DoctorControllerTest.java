@@ -1,5 +1,7 @@
-package hillel.doctorRest.doctor;
+package hillel.doctorRest.clinic.doctor;
 
+import hillel.doctorRest.clinic.doctor.Doctor;
+import hillel.doctorRest.clinic.doctor.DoctorRepository;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -36,11 +38,11 @@ public class DoctorControllerTest {
     public void shouldCreateDoctor() throws Exception {
         MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post("/doctors")
                 .contentType("application/json")
-                .content(fromResource("doctor/create-doctor.json")))
+                .content(fromResource("clinic/doctor/create-doctor.json")))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
-                .andExpect(MockMvcResultMatchers.header().string("location", Matchers.containsString("http://localhost/doctors/")))
+                .andExpect(MockMvcResultMatchers.header().string("location", Matchers.containsString("http://my-doctor.com/doctors/")))
                 .andReturn().getResponse();
-        Integer id = Integer.parseInt(response.getHeader("location").replace("http://localhost/doctors/", ""));
+        Integer id = Integer.parseInt(response.getHeader("location").replace("http://my-doctor.com/doctors/", ""));
         Assertions.assertThat(doctorRepository.findById(id)).isPresent();
     }
 
@@ -49,7 +51,7 @@ public class DoctorControllerTest {
         Integer id = doctorRepository.create(new Doctor(null, "Jack", "therapist")).getId() + 1;
         mockMvc.perform(MockMvcRequestBuilders.put("/doctors/{id}", id)
                 .contentType("application/json")
-                .content(fromResource("doctor/update-doctors.json")))
+                .content(fromResource("clinic/doctor/update-doctors.json")))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
@@ -59,7 +61,7 @@ public class DoctorControllerTest {
         doctorRepository.create(new Doctor(null, "Adam", "therapist"));
         mockMvc.perform(MockMvcRequestBuilders.put("/doctors/{id}", id)
                 .contentType("application/json")
-                .content(fromResource("doctor/update-doctors.json")))
+                .content(fromResource("clinic/doctor/update-doctors.json")))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
         Assertions.assertThat(doctorRepository.findById(id).get().getSpecialization()).isEqualTo("surgeon");
     }
@@ -89,7 +91,7 @@ public class DoctorControllerTest {
         doctorRepository.create(new Doctor(null, "Alex", "surgeon"));
         mockMvc.perform(MockMvcRequestBuilders.get("/doctors"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(fromResource("doctor/all-doctors.json"), false))
+                .andExpect(MockMvcResultMatchers.content().json(fromResource("clinic/doctor/all-doctors.json"), false))
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(3)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", Matchers.is("Jack")))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].name", Matchers.is("Adam")))

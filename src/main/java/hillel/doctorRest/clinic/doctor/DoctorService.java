@@ -1,5 +1,7 @@
-package hillel.doctorRest.doctor;
+package hillel.doctorRest.clinic.doctor;
 
+import hillel.doctorRest.clinic.doctor.Doctor;
+import hillel.doctorRest.clinic.doctor.DoctorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 

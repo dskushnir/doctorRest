@@ -1,4 +1,4 @@
-package hillel.doctorRest.doctor.dto;
+package hillel.doctorRest.clinic.doctor.dto;
 
 import lombok.Data;
 

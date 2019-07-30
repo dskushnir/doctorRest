@@ -1,6 +1,6 @@
-package hillel.doctorRest.doctor.dto;
+package hillel.doctorRest.clinic.doctor.dto;
 
-import hillel.doctorRest.doctor.Doctor;
+import hillel.doctorRest.clinic.doctor.Doctor;
 import org.mapstruct.Mapper;
 
 @Mapper

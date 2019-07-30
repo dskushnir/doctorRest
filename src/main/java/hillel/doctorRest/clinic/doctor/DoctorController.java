@@ -1,11 +1,12 @@
-package hillel.doctorRest.doctor;
+package hillel.doctorRest.clinic.doctor;
 
-import hillel.doctorRest.doctor.dto.DoctorDtoConverter;
-import hillel.doctorRest.doctor.dto.DoctorInputDto;
-import hillel.doctorRest.doctor.dto.DoctorModelConverter;
-import hillel.doctorRest.doctor.dto.DoctorOutputDto;
+import hillel.doctorRest.clinic.doctor.dto.DoctorDtoConverter;
+import hillel.doctorRest.clinic.doctor.dto.DoctorInputDto;
+import hillel.doctorRest.clinic.doctor.dto.DoctorModelConverter;
+import hillel.doctorRest.clinic.doctor.dto.DoctorOutputDto;
 import lombok.AllArgsConstructor;
 import lombok.val;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,15 +18,24 @@ import java.util.stream.Collectors;
 
 
 @RestController
-@AllArgsConstructor
+
 public class DoctorController {
     private final DoctorService doctorService;
     private final DoctorDtoConverter doctorDtoConverter;
     private final DoctorModelConverter doctorModelConverter;
-    private final UriComponentsBuilder uriBuilder = UriComponentsBuilder.newInstance()
-            .scheme("http")
-            .host("localhost")
-            .path("/doctors/{id}");
+    private final UriComponentsBuilder uriBuilder;
+
+    public DoctorController(DoctorService doctorService, DoctorDtoConverter doctorDtoConverter,
+                            DoctorModelConverter doctorModelConverter,
+                            @Value("${clinic.host-name:localhost}") String hostName) {
+        this.doctorService = doctorService;
+        this.doctorDtoConverter = doctorDtoConverter;
+        this.doctorModelConverter = doctorModelConverter;
+        uriBuilder = UriComponentsBuilder.newInstance()
+                .scheme("http")
+                .host(hostName)
+                .path("/doctors/{id}");
+    }
 
     @GetMapping("/doctors")
     public List<DoctorOutputDto> findAll(Optional<Integer> id,

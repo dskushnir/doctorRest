@@ -1,0 +1,10 @@
+clinic:
+  host-name: my-doctor.com
+  name: MyClinic
+  specializations:
+    specializationName: ['surgeon', 'therapist']
+
+
+
+
+
