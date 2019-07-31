@@ -1,5 +1,6 @@
 package hillel.doctorRest.clinic.doctor;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -7,8 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Repository
-public class DoctorRepository {
-    private final Map<Integer, Doctor> idToDoctor = new ConcurrentHashMap<>();
+public interface DoctorRepository extends JpaRepository<Doctor,Integer> {
+ /*   private final Map<Integer, Doctor> idToDoctor = new ConcurrentHashMap<>();
     private final AtomicInteger counter = new AtomicInteger();
 
 
@@ -41,7 +42,7 @@ public class DoctorRepository {
 
     public void deleteAll() {
         idToDoctor.clear();
-    }
+    }*/
 }
 
 

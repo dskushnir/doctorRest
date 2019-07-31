@@ -2,7 +2,18 @@ clinic:
   host-name: my-doctor.com
   name: MyClinic
   specializations:
-    specializationName: ['surgeon', 'therapist']
+    specializationName:
+      - surgeon
+      - therapist
+
+
+  spring:
+    h2:
+      console:
+        enabled: true
+  logging:
+    level:
+      sql: debug
 
 
 

@@ -57,14 +57,14 @@ public class DoctorService {
     }
 
     public Doctor createDoctor(Doctor doctor) {
-        return doctorRepository.create(doctor);
+        return doctorRepository.save(doctor);
     }
 
     public void update(Doctor doctor) {
-        doctorRepository.update(doctor);
+        doctorRepository.save(doctor);
     }
 
     public void delete(Integer id) {
-        doctorRepository.delete(id);
+        doctorRepository.deleteById(id);
     }
 }

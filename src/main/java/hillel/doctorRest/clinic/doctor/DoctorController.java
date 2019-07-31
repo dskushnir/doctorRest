@@ -1,9 +1,11 @@
 package hillel.doctorRest.clinic.doctor;
 
+import hillel.doctorRest.clinic.SpecializationConfig;
 import hillel.doctorRest.clinic.doctor.dto.DoctorDtoConverter;
 import hillel.doctorRest.clinic.doctor.dto.DoctorInputDto;
 import hillel.doctorRest.clinic.doctor.dto.DoctorModelConverter;
 import hillel.doctorRest.clinic.doctor.dto.DoctorOutputDto;
+import hillel.doctorRest.clinic.info.InfoController;
 import lombok.AllArgsConstructor;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,13 +26,16 @@ public class DoctorController {
     private final DoctorDtoConverter doctorDtoConverter;
     private final DoctorModelConverter doctorModelConverter;
     private final UriComponentsBuilder uriBuilder;
+    private SpecializationConfig specializationConfig;
+
 
     public DoctorController(DoctorService doctorService, DoctorDtoConverter doctorDtoConverter,
-                            DoctorModelConverter doctorModelConverter,
+                            DoctorModelConverter doctorModelConverter, SpecializationConfig specializationConfig,
                             @Value("${clinic.host-name:localhost}") String hostName) {
         this.doctorService = doctorService;
         this.doctorDtoConverter = doctorDtoConverter;
         this.doctorModelConverter = doctorModelConverter;
+        this.specializationConfig = specializationConfig;
         uriBuilder = UriComponentsBuilder.newInstance()
                 .scheme("http")
                 .host(hostName)
@@ -53,19 +58,24 @@ public class DoctorController {
 
     @PostMapping("/doctors")
     public ResponseEntity<Object> createDoctor(@RequestBody DoctorInputDto dto) {
-        val created = doctorService.createDoctor(doctorDtoConverter.toModel(dto));
-        return ResponseEntity.created(uriBuilder.build(created.getId())).build();
+        if (specializationConfig.getSpecializationName().contains(dto.getSpecialization())) {
+            val created = doctorService.createDoctor(doctorDtoConverter.toModel(dto));
+            return ResponseEntity.created(uriBuilder.build(created.getId())).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
+
 
     @PutMapping("/doctors/{id}")
     public ResponseEntity<?> updateDoctor(@RequestBody DoctorInputDto dto,
                                           @PathVariable Integer id) {
-        val doctor = doctorDtoConverter.toModel(dto, id);
-        try {
+        if (!specializationConfig.getSpecializationName().contains(dto.getSpecialization())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } else {
+            val doctor = doctorDtoConverter.toModel(dto, id);
             doctorService.update(doctor);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        } catch (NoSuchDoctorException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
