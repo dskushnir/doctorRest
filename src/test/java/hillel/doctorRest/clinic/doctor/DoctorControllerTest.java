@@ -32,7 +32,7 @@ public class DoctorControllerTest {
         doctorRepository.deleteAll();
     }
 
-  @Test
+    @Test
     public void shouldCreateDoctorNotFoundSpecialization() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.post("/doctors")
                 .contentType("application/json")
@@ -137,11 +137,34 @@ public class DoctorControllerTest {
         doctorRepository.save(new Doctor(null, "Jack", "therapist"));
         doctorRepository.save(new Doctor(null, "Alex", "surgeon"));
         mockMvc.perform(MockMvcRequestBuilders.get("/doctors")
-                .param("specialization", "surgeon")
+                .param("specializations", "surgeon")
                 .param("name", "Alex"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(1)))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].name", Matchers.is("Alex")));
+    }
+
+    @Test
+    public void shouldReturnBySpecializations() throws Exception {
+        doctorRepository.save(new Doctor(null, "Jack", "therapist"));
+        doctorRepository.save(new Doctor(null, "Alex", "cardiologist"));
+        doctorRepository.save(new Doctor(null, "Adam", "therapist"));
+        doctorRepository.save(new Doctor(null, "Adam", "surgeon"));
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctors")
+                .param("specializations", "surgeon", "cardiologist"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(2)))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].specialization", Matchers.is("cardiologist")))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].specialization", Matchers.is("surgeon")));
+    }
+
+    @Test
+    public void shouldReturnBySpecializationNotFound() throws Exception {
+        doctorRepository.save(new Doctor(null, "Jack", "therapist"));
+        doctorRepository.save(new Doctor(null, "Adam", "cardiologist"));
+        doctorRepository.save(new Doctor(null, "Adam", "therapist"));
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctors").param("specializations", "surgeon"))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     public String fromResource(String path) {
@@ -152,13 +175,12 @@ public class DoctorControllerTest {
             throw new RuntimeException(e);
         }
     }
-   /* @Test
-    public void shouldReturnBySpecializationNoFound() throws Exception {
-        doctorRepository.save(new Doctor(null, "Jack", "therapist"));
-        doctorRepository.save(new Doctor(null, "Adam", "therapist"));
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctors").param("specialization", "surgeon"))
-                .andExpect(MockMvcResultMatchers.status().isNotFound());
-    }
-    */
-
 }
+
+
+
+
+
+
+
+

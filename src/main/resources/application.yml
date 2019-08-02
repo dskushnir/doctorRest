@@ -5,6 +5,7 @@ clinic:
     specializationName:
       - surgeon
       - therapist
+      - cardiologist
 
 
   spring:
