@@ -1,59 +1,35 @@
 package hillel.doctorRest.clinic.doctor;
 
-import hillel.doctorRest.clinic.doctor.Doctor;
-import hillel.doctorRest.clinic.doctor.DoctorRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 @Service
 @AllArgsConstructor
 public class DoctorService {
     private final DoctorRepository doctorRepository;
 
-    private Predicate<Doctor> filterById(Integer id) {
-        return doctor -> doctor.getId().equals(id);
+    public Optional<Doctor> findById(Integer id) {
+        return doctorRepository.findById(id);
     }
 
-    private Predicate<Doctor> filterByFirstLatterName(String letter) {
-        return doctor -> doctor.getName().startsWith(letter);
-    }
+    public List<Doctor> findAll(Optional<String> name,
+                                Optional<List<String>> specializations) {
+        if (name.isPresent() && specializations.isPresent()) {
+            return doctorRepository.findByParameter(
+                    name.get(), specializations.get());
+        }
+        if (name.isPresent()) {
+            return doctorRepository.findByNameIgnoreCase(name.get());
+        }
+        if (specializations.isPresent()) {
+            return doctorRepository.findBySpecializationIn(specializations.get());
+        }
 
-    private Predicate<Doctor> filterDyName(String name) {
-        return doctor -> doctor.getName().equalsIgnoreCase(name);
-    }
-
-    private Predicate<Doctor> filterBySpecialization(String specialization) {
-        return doctor -> doctor.getSpecialization().equals(specialization);
-    }
-
-    public List<Doctor> findAll(Predicate<Doctor> predicate) {
-        return doctorRepository.findAll().stream()
-                .filter(predicate)
-                .collect(Collectors.toList());
-    }
-
-    public Predicate<Doctor> predicate(java.util.Optional<Integer> id,
-                                       java.util.Optional<String> nameLetter,
-                                       java.util.Optional<String> name,
-                                       java.util.Optional<String> specialization) {
-        java.util.Optional<Predicate<Doctor>> maybeIdPredicate = id
-                .map(this::filterById);
-        java.util.Optional<Predicate<Doctor>> maybeNamePredicate = name
-                .map(this::filterDyName);
-        java.util.Optional<Predicate<Doctor>> maybeByFirstLatterNamePredicate = nameLetter
-                .map(this::filterByFirstLatterName);
-        java.util.Optional<Predicate<Doctor>> maybeSpecializationPredicate = specialization
-                .map(this::filterBySpecialization);
-        return Stream.of(maybeIdPredicate, maybeNamePredicate, maybeByFirstLatterNamePredicate, maybeSpecializationPredicate)
-                .flatMap(Optional::stream)
-                .reduce(Predicate::and)
-                .orElse(doctor -> true);
+        return doctorRepository.findAll();
     }
 
     public Doctor createDoctor(Doctor doctor) {
@@ -68,3 +44,4 @@ public class DoctorService {
         doctorRepository.deleteById(id);
     }
 }
+

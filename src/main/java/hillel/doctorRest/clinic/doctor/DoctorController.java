@@ -5,9 +5,10 @@ import hillel.doctorRest.clinic.doctor.dto.DoctorDtoConverter;
 import hillel.doctorRest.clinic.doctor.dto.DoctorInputDto;
 import hillel.doctorRest.clinic.doctor.dto.DoctorModelConverter;
 import hillel.doctorRest.clinic.doctor.dto.DoctorOutputDto;
-import hillel.doctorRest.clinic.info.InfoController;
-import lombok.AllArgsConstructor;
+
+
 import lombok.val;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,12 +43,18 @@ public class DoctorController {
                 .path("/doctors/{id}");
     }
 
+    @GetMapping("/doctors/{id}")
+    public DoctorOutputDto findById(@PathVariable Integer id) {
+        val mayBeDoctor = doctorService.findById(id);
+        val doctor = mayBeDoctor.orElseThrow(DoctorNotFoundException::new);
+        val dtoDoctor = doctorModelConverter.toDto(doctor);
+        return dtoDoctor;
+    }
+
     @GetMapping("/doctors")
-    public List<DoctorOutputDto> findAll(Optional<Integer> id,
-                                         java.util.Optional<String> nameLetter,
-                                         java.util.Optional<String> name,
-                                         java.util.Optional<String> specialization) {
-        val doctors = doctorService.findAll(doctorService.predicate(id, nameLetter, name, specialization));
+    public List<DoctorOutputDto> findAll(@RequestParam Optional<String> name,
+                                         @RequestParam Optional<List<String>> specializations) {
+        val doctors = doctorService.findAll(name, specializations);
         if (doctors.size() == 0) {
             throw new DoctorNotFoundException();
         }
@@ -65,7 +72,6 @@ public class DoctorController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
-
 
     @PutMapping("/doctors/{id}")
     public ResponseEntity<?> updateDoctor(@RequestBody DoctorInputDto dto,
@@ -89,6 +95,7 @@ public class DoctorController {
         }
     }
 }
+
 
 
 
