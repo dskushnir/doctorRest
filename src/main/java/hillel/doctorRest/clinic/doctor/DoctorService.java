@@ -18,15 +18,16 @@ public class DoctorService {
 
     public List<Doctor> findAll(Optional<String> name,
                                 Optional<List<String>> specializations) {
-        if (name.isPresent() && specializations.isPresent()) {
-            return doctorRepository.findByParameter(
-                    name.get(), specializations.get());
+        if ( name.isPresent() && specializations.isPresent()) {
+            return doctorRepository.findByParameter(name.get(), specializations.get());
         }
+
+
         if (name.isPresent()) {
             return doctorRepository.findByNameIgnoreCase(name.get());
         }
         if (specializations.isPresent()) {
-            return doctorRepository.findBySpecializationIn(specializations.get());
+            return doctorRepository.findBySpecializationsIn(specializations.get());
         }
 
         return doctorRepository.findAll();

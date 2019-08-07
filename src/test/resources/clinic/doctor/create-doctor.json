@@ -1,4 +1,4 @@
 {
   "name": "Jack",
-  "specialization": "therapist"
+  "specializations": ["therapist"]
 }

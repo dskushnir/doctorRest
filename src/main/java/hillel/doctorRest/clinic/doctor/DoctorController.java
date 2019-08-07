@@ -52,8 +52,9 @@ public class DoctorController {
     }
 
     @GetMapping("/doctors")
-    public List<DoctorOutputDto> findAll(@RequestParam Optional<String> name,
-                                         @RequestParam Optional<List<String>> specializations) {
+    public List<DoctorOutputDto> findAll(
+            @RequestParam Optional<String> name,
+            @RequestParam Optional<List<String>> specializations) {
         val doctors = doctorService.findAll(name, specializations);
         if (doctors.size() == 0) {
             throw new DoctorNotFoundException();
@@ -65,7 +66,7 @@ public class DoctorController {
 
     @PostMapping("/doctors")
     public ResponseEntity<Object> createDoctor(@RequestBody DoctorInputDto dto) {
-        if (specializationConfig.getSpecializationName().contains(dto.getSpecialization())) {
+        if (specializationConfig.getSpecializationName().containsAll(dto.getSpecializations())) {
             val created = doctorService.createDoctor(doctorDtoConverter.toModel(dto));
             return ResponseEntity.created(uriBuilder.build(created.getId())).build();
         } else {
@@ -76,7 +77,7 @@ public class DoctorController {
     @PutMapping("/doctors/{id}")
     public ResponseEntity<?> updateDoctor(@RequestBody DoctorInputDto dto,
                                           @PathVariable Integer id) {
-        if (!specializationConfig.getSpecializationName().contains(dto.getSpecialization())) {
+        if (!specializationConfig.getSpecializationName().containsAll(dto.getSpecializations())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } else {
             val doctor = doctorDtoConverter.toModel(dto, id);

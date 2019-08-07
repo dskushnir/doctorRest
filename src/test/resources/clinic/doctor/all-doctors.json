@@ -1,14 +1,14 @@
 [
   {
     "name": "Jack",
-    "specialization": "therapist"
+    "specializations": ["therapist"]
   },
   {
     "name": "Adam",
-    "specialization": "therapist"
+    "specializations": ["therapist"]
   },
   {
     "name": "Alex",
-    "specialization": "surgeon"
+    "specializations": ["surgeon"]
   }
 ]

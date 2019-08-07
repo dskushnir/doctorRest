@@ -6,17 +6,20 @@ clinic:
       - surgeon
       - therapist
       - cardiologist
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
 
-
-  spring:
-    h2:
-      console:
-        enabled: true
-  logging:
-    level:
-      sql: debug
-
-
-
-
-
+  h2:
+    console:
+      enabled: true
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create
+logging:
+  level:
+    sql: debug
