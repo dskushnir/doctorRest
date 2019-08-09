@@ -1,5 +1,4 @@
 package hillel.doctorRest.clinic.schedule;
-
 import hillel.doctorRest.clinic.WisitHoursConfig;
 import hillel.doctorRest.clinic.doctor.DoctorNotFoundException;
 import hillel.doctorRest.clinic.doctor.DoctorService;
