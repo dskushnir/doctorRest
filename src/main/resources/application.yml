@@ -6,6 +6,16 @@ clinic:
       - surgeon
       - therapist
       - cardiologist
+  hours:
+    hourName:
+      - 8
+      - 9
+      - 10
+      - 11
+      - 12
+      - 13
+      - 14
+      - 15
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
