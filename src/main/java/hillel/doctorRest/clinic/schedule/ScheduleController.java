@@ -4,17 +4,17 @@ import hillel.doctorRest.clinic.doctor.DoctorNotFoundException;
 import hillel.doctorRest.clinic.doctor.DoctorService;
 import hillel.doctorRest.clinic.pet.PetNotFoundException;
 import hillel.doctorRest.clinic.pet.PetService;
-import hillel.doctorRest.clinic.schedule.dto.ScheduleDtoConverter;
-import hillel.doctorRest.clinic.schedule.dto.ScheduleInputDto;
-import hillel.doctorRest.clinic.schedule.dto.ScheduleModelConverter;
-import hillel.doctorRest.clinic.schedule.dto.ScheduleOutputDto;
+import hillel.doctorRest.clinic.schedule.dto.*;
 import lombok.AllArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import lombok.val;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -23,30 +23,35 @@ import java.util.stream.Collectors;
 public class ScheduleController {
     private final ScheduleService scheduleService;
     private final DoctorService doctorService;
+    private final ScheduleRepository scheduleRepository;
     private final PetService petService;
     private WisitHoursConfig wisitHoursConfig;
     private final ScheduleDtoConverter scheduleDtoConverter;
     private final ScheduleModelConverter scheduleModelConverter;
+    private final ScheduleMapOutputDtoConverter scheduleMapOutputDtoConverter;
+
+    @GetMapping("/doctors/schedule")
+    public List<ScheduleOutputDto>findAll(){
+        return scheduleModelConverter.schedulesToOutputDto(scheduleService.findAll());
+            }
 
     @GetMapping("/doctors/doctorId/schedule/visitDate")
     @ResponseStatus(HttpStatus.OK)
-    public List<ScheduleOutputDto> findByDoctorIdAndVisitDate(@RequestParam Integer doctorId,
-                                                              @RequestParam LocalDateTime visitDate) {
+    public Map<String,String> findByDoctorIdAndVisitDate(@RequestParam Integer doctorId,
+                                          @RequestParam ("visitDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate visitDate) {
         if (doctorService.findById(doctorId).isEmpty()) {
             throw new DoctorNotFoundException();
-        } else {
-            val scheduleByDoctor = scheduleService.findByDoctorIdAndVisitDate(doctorId, visitDate);
-            return scheduleByDoctor.stream()
-                    .map(schedule -> scheduleModelConverter.toDto(schedule))
-                    .collect(Collectors.toList());
-        }
+        } else return scheduleMapOutputDtoConverter
+                .hourToPetId(scheduleModelConverter
+                        .schedulesToOutputDto(scheduleService
+                                .findByDoctorIdAndVisitDate(doctorId,visitDate)));
     }
 
-    @PostMapping("/doctors/{doctorId}/schedule/{createDate}/{hour}")
+    @PostMapping("/doctors/{doctorId}/schedule/{visitDate}/{hour}")
     @ResponseStatus(HttpStatus.CREATED)
     public void createSchedule(@PathVariable Integer doctorId,
                                @RequestBody ScheduleInputDto scheduleInputDto,
-                               @PathVariable LocalDateTime visitDate,
+                               @PathVariable ("visitDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate visitDate,
                                @PathVariable String hour) {
         if (doctorService.findById(doctorId).isEmpty()) {
             throw new DoctorNotFoundException();

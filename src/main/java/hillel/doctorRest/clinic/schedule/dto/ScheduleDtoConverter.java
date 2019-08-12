@@ -4,9 +4,11 @@ import hillel.doctorRest.clinic.schedule.Schedule;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper
 
+
+@Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface ScheduleDtoConverter {
     @Mappings({@Mapping(target = "id", ignore = true),
             @Mapping(target = "doctorId", ignore = true),

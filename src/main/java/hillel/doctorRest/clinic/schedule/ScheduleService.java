@@ -3,6 +3,7 @@ package hillel.doctorRest.clinic.schedule;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -12,9 +13,13 @@ import java.util.Optional;
 
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
+    public final List<Schedule>findAll(){
+        return scheduleRepository.findAll();
+    }
+
 
     public List<Schedule>findByDoctorIdAndVisitDate(Integer id,
-                                                    LocalDateTime visitDate){
+                                                    LocalDate visitDate){
         return scheduleRepository.findByDoctorIdAndVisitDate(id,visitDate);
     }
 
@@ -23,7 +28,7 @@ public class ScheduleService {
     }
 
     public void createSchedule(Integer doctorId,
-                               LocalDateTime visitDate,
+                               LocalDate visitDate,
                                String hour, Schedule schedule) {
 
         schedule.setDoctorId(doctorId);
