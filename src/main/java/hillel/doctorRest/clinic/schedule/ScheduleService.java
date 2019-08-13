@@ -27,13 +27,13 @@ public class ScheduleService {
         return scheduleRepository.findByHour(hour);
     }
 
-    public void createSchedule(Integer doctorId,
+    public Schedule createSchedule(Integer doctorId,
                                LocalDate visitDate,
                                String hour, Schedule schedule) {
 
         schedule.setDoctorId(doctorId);
         schedule.setVisitDate(visitDate);
         schedule.setHour(hour);
-        scheduleRepository.save(schedule);
+       return scheduleRepository.save(schedule);
     }
 }

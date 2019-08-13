@@ -9,6 +9,5 @@ import java.util.List;
 @Mapper
 public interface ScheduleModelConverter {
     ScheduleOutputDto toDto(Schedule schedule);
-
     List<ScheduleOutputDto> schedulesToOutputDto(List<Schedule> schedules);
 }
