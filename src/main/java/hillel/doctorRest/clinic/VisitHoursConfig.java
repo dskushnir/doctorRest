@@ -11,6 +11,6 @@ import java.util.List;
 @Configuration
 @ConfigurationProperties("clinic.hours")
 
-public class WisitHoursConfig {
-    List<String>hourName=new ArrayList<>();
+public class VisitHoursConfig {
+    List<String> hourName = new ArrayList<>();
 }

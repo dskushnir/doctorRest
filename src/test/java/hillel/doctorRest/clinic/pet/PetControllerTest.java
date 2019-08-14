@@ -19,6 +19,7 @@ import java.io.File;
 import java.nio.file.Files;
 
 import static org.junit.Assert.*;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -27,6 +28,7 @@ public class PetControllerTest {
     MockMvc mockMvc;
     @Autowired
     PetRepository petRepository;
+
     @After
     public void cleanup() {
         petRepository.deleteAll();
@@ -42,9 +44,8 @@ public class PetControllerTest {
                 .andReturn().getResponse();
         Integer id = Integer.parseInt(response.getHeader("location").replace("http://my-doctor.com/pets/", ""));
         Assertions.assertThat(petRepository.findById(id)).isPresent();
-
-
     }
+
     public String fromResource(String path) {
         try {
             File file = ResourceUtils.getFile("classpath:" + path);

@@ -1,23 +1,20 @@
 package hillel.doctorRest.clinic.schedule;
 
-import hillel.doctorRest.clinic.WisitHoursConfig;
+import hillel.doctorRest.clinic.VisitHoursConfig;
 import hillel.doctorRest.clinic.doctor.DoctorNotFoundException;
 import hillel.doctorRest.clinic.doctor.DoctorService;
 import hillel.doctorRest.clinic.pet.PetNotFoundException;
 import hillel.doctorRest.clinic.pet.PetService;
 import hillel.doctorRest.clinic.schedule.dto.*;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 import lombok.val;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
-
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,10 +28,9 @@ public class ScheduleController {
     private final ScheduleService scheduleService;
     private final DoctorService doctorService;
     private final PetService petService;
-    private WisitHoursConfig wisitHoursConfig;
+    private VisitHoursConfig visitHoursConfig;
     private final ScheduleDtoConverter scheduleDtoConverter;
     private final ScheduleModelConverter scheduleModelConverter;
-
 
 
     @GetMapping("/doctors/schedule")
@@ -45,8 +41,8 @@ public class ScheduleController {
 
     @GetMapping("/doctors/{doctorId}/schedule/{visitDate}")
     @ResponseStatus(HttpStatus.OK)
-    public Map<String, Object> toPetId(@PathVariable Integer doctorId,
-                                       @PathVariable("visitDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate visitDate) {
+    public Map<String, Object> hourToPetId(@PathVariable Integer doctorId,
+                                           @PathVariable("visitDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate visitDate) {
         if (doctorService.findById(doctorId).isEmpty()) {
             throw new DoctorNotFoundException();
         }
@@ -69,20 +65,21 @@ public class ScheduleController {
     @PostMapping("/doctors/{doctorId}/schedule/{visitDate}/{hour}")
     @ResponseStatus(HttpStatus.CREATED)
     public Schedule createSchedule(@PathVariable Integer doctorId,
-                                                 @RequestBody ScheduleInputDto scheduleInputDto,
-                                                 @PathVariable("visitDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate visitDate,
-                                                 @PathVariable String hour) {
+                                   @RequestBody ScheduleInputDto scheduleInputDto,
+                                   @PathVariable("visitDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate visitDate,
+                                   @PathVariable String hour) {
         if (doctorService.findById(doctorId).isEmpty()) {
             throw new DoctorNotFoundException();
         } else if (petService.findById(Integer.valueOf(scheduleInputDto.getPetId())).isEmpty()) {
             throw new PetNotFoundException();
-        } else if (!wisitHoursConfig.getHourName().contains(hour)) {
+        } else if (!visitHoursConfig.getHourName().contains(hour)) {
             throw new HourNotFoundException();
         } else if (scheduleService.findByHour(hour).isPresent()) {
             throw new HourNotFoundAvailableException();
         } else {
-            val createModel = scheduleService.createSchedule(doctorId, visitDate, hour, scheduleDtoConverter.toModel(scheduleInputDto));
-            return createModel;
+            return scheduleService
+                    .createSchedule(doctorId, visitDate, hour, scheduleDtoConverter
+                            .toModel(scheduleInputDto));
         }
     }
 }

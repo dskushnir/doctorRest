@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,14 +12,14 @@ import java.util.Optional;
 
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
-    public final List<Schedule>findAll(){
+
+    public final List<Schedule> findAll() {
         return scheduleRepository.findAll();
     }
 
-
-    public List<Schedule>findByDoctorIdAndVisitDate(Integer id,
-                                                    LocalDate visitDate){
-        return scheduleRepository.findByDoctorIdAndVisitDate(id,visitDate);
+    public List<Schedule> findByDoctorIdAndVisitDate(Integer id,
+                                                     LocalDate visitDate) {
+        return scheduleRepository.findByDoctorIdAndVisitDate(id, visitDate);
     }
 
     public Optional<Schedule> findByHour(String hour) {
@@ -28,12 +27,11 @@ public class ScheduleService {
     }
 
     public Schedule createSchedule(Integer doctorId,
-                               LocalDate visitDate,
-                               String hour, Schedule schedule) {
-
+                                   LocalDate visitDate,
+                                   String hour, Schedule schedule) {
         schedule.setDoctorId(doctorId);
         schedule.setVisitDate(visitDate);
         schedule.setHour(hour);
-       return scheduleRepository.save(schedule);
+        return scheduleRepository.save(schedule);
     }
 }

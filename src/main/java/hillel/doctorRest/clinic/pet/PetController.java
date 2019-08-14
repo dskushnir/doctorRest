@@ -1,18 +1,14 @@
 package hillel.doctorRest.clinic.pet;
 
-import hillel.doctorRest.clinic.doctor.DoctorNotFoundException;
 import hillel.doctorRest.clinic.pet.dto.PetDtoConverter;
 import hillel.doctorRest.clinic.pet.dto.PetInputDto;
 import hillel.doctorRest.clinic.pet.dto.PetModelConverter;
 import hillel.doctorRest.clinic.pet.dto.PetOutputDto;
-import lombok.AllArgsConstructor;
 import lombok.val;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
-
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +35,7 @@ public class PetController {
 
     @GetMapping("/pets")
     public List<PetOutputDto> getAll() {
-        val pets=petService.findAll();
+        val pets = petService.findAll();
         if (pets.size() == 0) {
             throw new PetNotFoundException();
         }
@@ -50,7 +46,7 @@ public class PetController {
 
     @PostMapping("/pets")
     public ResponseEntity<Object> createPet(@RequestBody PetInputDto petInputDto) {
-       val created= petService.createPet(petDtoConverter.toModel(petInputDto));
-       return ResponseEntity.created(uriBuilder.build(created.getId())).build();
+        val created = petService.createPet(petDtoConverter.toModel(petInputDto));
+        return ResponseEntity.created(uriBuilder.build(created.getId())).build();
     }
 }

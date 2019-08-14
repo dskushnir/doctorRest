@@ -6,7 +6,6 @@ import java.time.LocalDate;
 
 @Data
 public class ScheduleOutputDto {
-
     private Integer id;
     private LocalDate visitDate;
     private Integer doctorId;

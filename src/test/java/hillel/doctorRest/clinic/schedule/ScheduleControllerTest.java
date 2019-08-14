@@ -6,6 +6,7 @@ import hillel.doctorRest.clinic.pet.Pet;
 import hillel.doctorRest.clinic.pet.PetRepository;
 import hillel.doctorRest.clinic.pet.PetService;
 import org.assertj.core.api.Assertions;
+import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,9 +21,11 @@ import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -37,47 +40,80 @@ public class ScheduleControllerTest {
     PetRepository petRepository;
     @Autowired
     ScheduleRepository scheduleRepository;
-    @Autowired
-    PetService petService;
+
     @After
-    public void cleanup(){
+    public void cleanup() {
         doctorRepository.deleteAll();
         petRepository.deleteAll();
         scheduleRepository.deleteAll();
     }
 
     @Test
-    public void findAll() {
+    public void shouldHourToPetId() throws Exception {
+        Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
+        String idPet1 = ((petRepository.save(new Pet(null, "Donald"))).getId()).toString();
+        String idPet2 = ((petRepository.save(new Pet(null, "Tom")).getId())).toString();
+        scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "8", idPet1));
+        scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "9", idPet2));
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctors/{doctorId}/schedule/{visitDate}", idDoctor, LocalDate.of(2010, 1, 1)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("hourToPetId", Matchers.hasEntry("8", idPet1)))
+                .andExpect(MockMvcResultMatchers.jsonPath("hourToPetId", Matchers.hasEntry("9", idPet2)));
     }
 
     @Test
-    public void shouldToPetId() {
-       Integer idDoctor=( doctorRepository.save(new Doctor(null,"Alex",Arrays.asList("therapist")))).getId();
-       String idPet1=(( petRepository.save(new Pet(null,"Donald"))).getId()).toString();
-       String idPet2=((petRepository.save(new Pet(null,"Tom")).getId())).toString();
-       scheduleRepository.save(new Schedule(null,"2010-01-01",idDoctor,"8",idPet1));
-       scheduleRepository.save(new Schedule(null,"2010-01-01",idDoctor,"9",idPet2));
-        mockMvc.perform(MockMvcRequestBuilders.get("/doctors/{doctorId}/schedule/{visitDate}")
-                .param("doctorId", idDoctor.toString())
-                .param("visitDate", "2010-01-01")
-                .andExpect(MockMvcResultMatchers.status().isOk()));
-
+    public void shouldHourToPetIdNotFoundDoctor() throws Exception {
+        Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId() + 1;
+        String idPet1 = ((petRepository.save(new Pet(null, "Donald"))).getId()).toString();
+        String idPet2 = ((petRepository.save(new Pet(null, "Tom")).getId())).toString();
+        scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "8", idPet1));
+        scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "9", idPet2));
+        mockMvc.perform(MockMvcRequestBuilders.get("/doctors/{doctorId}/schedule/{visitDate}", idDoctor, LocalDate.of(2010, 1, 1)))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
     @Test
-    public void shouldCreateSchedule()throws Exception {
-       Integer id=(doctorRepository.save(new Doctor(null,"Alex",Arrays.asList("therapist")))).getId();
-       String stringId=id.toString();
-        petRepository.save(new Pet(null,"Donald"));
-        mockMvc.perform(MockMvcRequestBuilders.post("/doctors/{doctorId}/schedule/{visitDate}/{hour}")
-                .param("doctorId",stringId)
-                .param("visitDate","2010-01-01")
-                .param("hour", "10")
+    public void shouldCreateScheduleNotFoundDoctor() throws Exception {
+        Integer id = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId() + 1;
+        petRepository.save(new Pet(null, "Donald"));
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctors/{doctorId}/schedule/{visitDate}/{hour}", id, LocalDate.of(2010, 1, 1), "10")
                 .contentType("application/json")
-                .content(fromResource("clinic/schedule/create-schedule.json")))
-                .andExpect(MockMvcResultMatchers.status().isNoContent());
-
+                .content(fromResource("clinic/schedule/schedule-create.json")))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
+
+    @Test
+    public void shouldCreateScheduleNotFoundPet() throws Exception {
+        Integer id = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
+        petRepository.save(new Pet(null, "Donald"));
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctors/{doctorId}/schedule/{visitDate}/{hour}", id, LocalDate.of(2010, 1, 1), "10")
+                .contentType("application/json")
+                .content(fromResource("clinic/schedule/schedule-createNotFoundPet.json")))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void shouldCreateScheduleNotHour() throws Exception {
+        Integer id = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
+        String idPet1 = ((petRepository.save(new Pet(null, "Tom")).getId())).toString();
+        scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), id, "8", idPet1));
+        petRepository.save(new Pet(null, "Tom"));
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctors/{doctorId}/schedule/{visitDate}/{hour}", id, LocalDate.of(2010, 1, 1), "8")
+                .contentType("application/json")
+                .content(fromResource("clinic/schedule/schedule-create.json")))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
+    public void shouldCreateSchedule() throws Exception {
+        Integer id = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
+        petRepository.save(new Pet(null, "Donald"));
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctors/{doctorId}/schedule/{visitDate}/{hour}", id, LocalDate.of(2010, 1, 1), "10")
+                .contentType("application/json")
+                .content(fromResource("clinic/schedule/schedule-create.json")))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
+    }
+
     public String fromResource(String path) {
         try {
             File file = ResourceUtils.getFile("classpath:" + path);
