@@ -1,5 +1,6 @@
 package hillel.doctorRest.clinic.doctor;
 
+import hillel.doctorRest.TestRunner;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -21,8 +22,7 @@ import java.util.Arrays;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
+@TestRunner
 public class DoctorControllerTest {
     @Autowired
     MockMvc mockMvc;

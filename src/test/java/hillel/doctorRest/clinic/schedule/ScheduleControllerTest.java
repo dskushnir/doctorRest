@@ -1,5 +1,6 @@
 package hillel.doctorRest.clinic.schedule;
 
+import hillel.doctorRest.TestRunner;
 import hillel.doctorRest.clinic.doctor.Doctor;
 import hillel.doctorRest.clinic.doctor.DoctorRepository;
 import hillel.doctorRest.clinic.pet.Pet;
@@ -27,8 +28,7 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
+@TestRunner
 
 
 public class ScheduleControllerTest {
@@ -46,6 +46,15 @@ public class ScheduleControllerTest {
         doctorRepository.deleteAll();
         petRepository.deleteAll();
         scheduleRepository.deleteAll();
+    }
+    @Test
+    public void shouldCreateSchedule() throws Exception {
+        Integer id = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
+        petRepository.save(new Pet(null, "Donald"));
+        mockMvc.perform(MockMvcRequestBuilders.post("/doctors/{doctorId}/schedule/{visitDate}/{hour}", id, LocalDate.of(2010, 1, 1), "10")
+                .contentType("application/json")
+                .content(fromResource("clinic/schedule/schedule-create.json")))
+                .andExpect(MockMvcResultMatchers.status().isCreated());
     }
 
     @Test
@@ -104,15 +113,8 @@ public class ScheduleControllerTest {
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
 
-    @Test
-    public void shouldCreateSchedule() throws Exception {
-        Integer id = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
-        petRepository.save(new Pet(null, "Donald"));
-        mockMvc.perform(MockMvcRequestBuilders.post("/doctors/{doctorId}/schedule/{visitDate}/{hour}", id, LocalDate.of(2010, 1, 1), "10")
-                .contentType("application/json")
-                .content(fromResource("clinic/schedule/schedule-create.json")))
-                .andExpect(MockMvcResultMatchers.status().isCreated());
-    }
+
+
 
     public String fromResource(String path) {
         try {

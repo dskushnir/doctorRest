@@ -1,5 +1,6 @@
 package hillel.doctorRest.clinic.pet;
 
+import hillel.doctorRest.TestRunner;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.After;
@@ -21,8 +22,7 @@ import java.nio.file.Files;
 import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
+@TestRunner
 public class PetControllerTest {
     @Autowired
     MockMvc mockMvc;
