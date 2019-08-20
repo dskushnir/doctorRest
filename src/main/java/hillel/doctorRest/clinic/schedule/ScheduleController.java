@@ -8,8 +8,10 @@ import hillel.doctorRest.clinic.pet.PetService;
 import hillel.doctorRest.clinic.schedule.dto.*;
 import lombok.AllArgsConstructor;
 
+import org.hibernate.StaleObjectStateException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.web.bind.annotation.*;
 import lombok.val;
 import org.springframework.web.server.ResponseStatusException;
@@ -31,14 +33,12 @@ public class ScheduleController {
     private final ScheduleModelConverter scheduleModelConverter;
 
 
-    @GetMapping("/doctors/schedule")
-    public List<ScheduleOutputDto> findAll() {
-        return scheduleModelConverter
-                .schedulesToOutputDto(scheduleService.findAll());
+    @GetMapping("/doctors/{doctorId}/schedule")
+    public List<Schedule> findAll(@PathVariable Integer doctorId){
+        return scheduleService.findByDoctorId(doctorId);
     }
 
     @GetMapping("/doctors/{doctorId}/schedule/{visitDate}")
-    @ResponseStatus(HttpStatus.OK)
     public Map<String, Object> hourToPetId(@PathVariable Integer doctorId,
                                            @PathVariable("visitDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate visitDate) {
         if (doctorService.findById(doctorId).isEmpty()) {
@@ -68,6 +68,7 @@ public class ScheduleController {
 
     @PostMapping("/doctors/{doctorId}/schedule/{visitDate}/{hour}")
     @ResponseStatus(HttpStatus.CREATED)
+  //  @Retryable(StaleObjectStateException.class)
     public Schedule createSchedule(@PathVariable Integer doctorId,
                                    @RequestBody ScheduleInputDto scheduleInputDto,
                                    @PathVariable("visitDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate visitDate,

@@ -1,0 +1,1 @@
+update schedule set version=1;

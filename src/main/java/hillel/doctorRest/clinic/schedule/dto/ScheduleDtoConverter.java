@@ -11,6 +11,7 @@ public interface ScheduleDtoConverter {
     @Mappings({@Mapping(target = "id", ignore = true),
             @Mapping(target = "doctorId", ignore = true),
             @Mapping(target = "visitDate", ignore = true),
-            @Mapping(target = "hour", ignore = true)})
+            @Mapping(target = "hour", ignore = true),
+            @Mapping(target = "version", ignore = true)})
     Schedule toModel(ScheduleInputDto scheduleInputDto);
 }

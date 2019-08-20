@@ -1,6 +1,8 @@
 package hillel.doctorRest.clinic.schedule;
 
 import lombok.AllArgsConstructor;
+import org.hibernate.StaleObjectStateException;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -17,18 +19,25 @@ import org.springframework.transaction.annotation.Transactional;
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
 
+    @Retryable(StaleObjectStateException.class)
     public Schedule createSchedule(Integer doctorId,
                                    LocalDate visitDate,
                                    String hour, Schedule schedule) {
         schedule.setDoctorId(doctorId);
         schedule.setVisitDate(visitDate);
         schedule.setHour(hour);
+        try {
+            Thread.sleep(3500);
+        } catch (InterruptedException e) { }
         return saveSchedule(schedule);
     }
 
-    public final List<Schedule> findAll() {
-        return scheduleRepository.findAll();
-    }
+    public  List<Schedule> findAll() {
+        return scheduleRepository.findAll();}
+        public List<Schedule>findByDoctorId(Integer id){
+        return scheduleRepository.findByDoctorId(id);
+        }
+
 
     public List<Schedule> findByDoctorIdAndVisitDate(Integer id,
                                                      LocalDate visitDate) {

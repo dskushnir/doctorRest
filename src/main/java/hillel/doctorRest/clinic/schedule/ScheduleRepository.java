@@ -12,4 +12,5 @@ import java.util.Optional;
 public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
     List<Schedule> findByDoctorIdAndVisitDateAndHour(Integer doctorId,LocalDate visitDate,String hour);
     List<Schedule>findByDoctorIdAndVisitDate(Integer doctorId, LocalDate visitDate);
+    List<Schedule>findByDoctorId(Integer doctorId);
 }

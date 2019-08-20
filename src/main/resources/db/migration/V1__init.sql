@@ -26,6 +26,7 @@ name varchar(255)
 
 create table schedule(
 id serial primary key,
+version integer,
 doctor_id integer,
 hour varchar(255),
 pet_id varchar(255),
