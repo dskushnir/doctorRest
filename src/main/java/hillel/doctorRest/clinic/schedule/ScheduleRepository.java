@@ -10,6 +10,6 @@ import java.util.Optional;
 @Repository
 
 public interface ScheduleRepository extends JpaRepository<Schedule, Integer> {
-    Optional<Schedule> findByHour(String hour);
+    List<Schedule> findByDoctorIdAndVisitDateAndHour(Integer doctorId,LocalDate visitDate,String hour);
     List<Schedule>findByDoctorIdAndVisitDate(Integer doctorId, LocalDate visitDate);
 }

@@ -8,7 +8,6 @@ import org.mapstruct.Mapping;
 public interface DoctorDtoConverter {
     @Mapping(target = "id", ignore = true)
     Doctor toModel(DoctorInputDto dto);
-
     Doctor toModel(DoctorInputDto dto, Integer id);
 
 }

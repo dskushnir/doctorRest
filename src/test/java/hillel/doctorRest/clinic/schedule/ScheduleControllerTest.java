@@ -59,7 +59,7 @@ public class ScheduleControllerTest {
 
     @Test
     public void shouldHourToPetId() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
+        Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex",Arrays.asList("therapist")))).getId();
         String idPet1 = ((petRepository.save(new Pet(null, "Donald"))).getId()).toString();
         String idPet2 = ((petRepository.save(new Pet(null, "Tom")).getId())).toString();
         scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "8", idPet1));
@@ -72,7 +72,7 @@ public class ScheduleControllerTest {
 
     @Test
     public void shouldHourToPetIdNotFoundDoctor() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId() + 1;
+        Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex",Arrays.asList("therapist")))).getId() + 1;
         String idPet1 = ((petRepository.save(new Pet(null, "Donald"))).getId()).toString();
         String idPet2 = ((petRepository.save(new Pet(null, "Tom")).getId())).toString();
         scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "8", idPet1));
@@ -103,7 +103,7 @@ public class ScheduleControllerTest {
 
     @Test
     public void shouldCreateScheduleNotHour() throws Exception {
-        Integer id = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
+        Integer id = (doctorRepository.save(new Doctor(null, "Alex",Arrays.asList("therapist")))).getId();
         String idPet1 = ((petRepository.save(new Pet(null, "Tom")).getId())).toString();
         scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), id, "8", idPet1));
         petRepository.save(new Pet(null, "Tom"));

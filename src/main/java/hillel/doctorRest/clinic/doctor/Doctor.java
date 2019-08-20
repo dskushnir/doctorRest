@@ -6,12 +6,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+
 @Builder(toBuilder = true)
 
 @Entity
@@ -22,5 +22,6 @@ public class Doctor {
     private String name;
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String>specializations;
+
 }
 
