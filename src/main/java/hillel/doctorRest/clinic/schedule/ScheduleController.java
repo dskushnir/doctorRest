@@ -1,3 +1,4 @@
+
 package hillel.doctorRest.clinic.schedule;
 
 import hillel.doctorRest.clinic.VisitHoursConfig;
@@ -8,10 +9,8 @@ import hillel.doctorRest.clinic.pet.PetService;
 import hillel.doctorRest.clinic.schedule.dto.*;
 import lombok.AllArgsConstructor;
 
-import org.hibernate.StaleObjectStateException;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.web.bind.annotation.*;
 import lombok.val;
 import org.springframework.web.server.ResponseStatusException;
@@ -23,7 +22,6 @@ import java.util.stream.Collectors;
 @RestController
 @AllArgsConstructor
 
-
 public class ScheduleController {
     private final ScheduleService scheduleService;
     private final DoctorService doctorService;
@@ -34,7 +32,7 @@ public class ScheduleController {
 
 
     @GetMapping("/doctors/{doctorId}/schedule")
-    public List<Schedule> findAll(@PathVariable Integer doctorId){
+    public List<Schedule> findAll(@PathVariable Integer doctorId) {
         return scheduleService.findByDoctorId(doctorId);
     }
 
@@ -44,7 +42,7 @@ public class ScheduleController {
         if (doctorService.findById(doctorId).isEmpty()) {
             throw new DoctorNotFoundException();
         }
-        Map<String, Object> map = new HashMap<>() ;
+        Map<String, Object> map = new HashMap<>();
 
         val mapToPetId = (scheduleModelConverter
                 .schedulesToOutputDto(scheduleService
@@ -52,7 +50,7 @@ public class ScheduleController {
                 .stream()
                 .collect(Collectors
                         .toMap(ScheduleOutputDto::getHour, ScheduleOutputDto::getPetId));
-        val sortedMapToPetId=mapToPetId.entrySet().stream()
+        val sortedMapToPetId = mapToPetId.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
                         (oldValue, newValue) -> oldValue, LinkedHashMap::new));
@@ -68,7 +66,6 @@ public class ScheduleController {
 
     @PostMapping("/doctors/{doctorId}/schedule/{visitDate}/{hour}")
     @ResponseStatus(HttpStatus.CREATED)
-  //  @Retryable(StaleObjectStateException.class)
     public Schedule createSchedule(@PathVariable Integer doctorId,
                                    @RequestBody ScheduleInputDto scheduleInputDto,
                                    @PathVariable("visitDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate visitDate,
@@ -90,18 +87,16 @@ public class ScheduleController {
 
     @PostMapping("/doctors/swap-doctors/{visitDate}/{doctor1Id}/{doctor2Id}")
     @ResponseStatus(HttpStatus.OK)
-    public void swapOwners(@PathVariable("visitDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate visitDate,
+    public void swapListDoctors(@PathVariable("visitDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate visitDate,
                            @PathVariable Integer doctor1Id,
                            @PathVariable Integer doctor2Id) throws Exception {
         if (doctorService.findById(doctor1Id).isEmpty()) {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Doctor with id="+doctor1Id+" not Found");
+                    HttpStatus.NOT_FOUND, "Doctor with id=" + doctor1Id + " not Found");
         }
         if (doctorService.findById(doctor2Id).isEmpty()) {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Doctor with id="+doctor2Id+" not Found");
-        }
-        else scheduleService.swapListDoctors(visitDate, doctor1Id, doctor2Id);
+                    HttpStatus.NOT_FOUND, "Doctor with id=" + doctor2Id + " not Found");
+        } else scheduleService.swapListDoctors(visitDate, doctor1Id, doctor2Id);
     }
 }
-

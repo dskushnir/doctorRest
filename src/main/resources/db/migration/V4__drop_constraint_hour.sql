@@ -1,0 +1,1 @@
+ALTER TABLE schedule DROP CONSTRAINT hour;

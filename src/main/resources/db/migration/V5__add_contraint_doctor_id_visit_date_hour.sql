@@ -1,0 +1,1 @@
+ALTER TABLE schedule ADD CONSTRAINT doctor_id_visit_date_hour UNIQUE (doctor_id,hour,visit_date);
