@@ -36,7 +36,6 @@ public class ScheduleService {
         return scheduleRepository.findByDoctorId(id);
     }
 
-
     public List<Schedule> findByDoctorIdAndVisitDate(Integer id,
                                                      LocalDate visitDate) {
         return scheduleRepository.findByDoctorIdAndVisitDate(id, visitDate);

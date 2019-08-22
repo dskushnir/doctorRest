@@ -50,17 +50,13 @@ public class ScheduleController {
                 .stream()
                 .collect(Collectors
                         .toMap(ScheduleOutputDto::getHour, ScheduleOutputDto::getPetId));
-        val sortedMapToPetId = mapToPetId.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-
+        sortedMapToPetId(mapToPetId);
         String methodName = new Object() {
         }
                 .getClass()
                 .getEnclosingMethod()
                 .getName();
-        map.put(methodName, sortedMapToPetId);
+        map.put(methodName, sortedMapToPetId(mapToPetId));
         return map;
     }
 
@@ -85,11 +81,23 @@ public class ScheduleController {
         }
     }
 
+    public String idDoc(Integer idDoc) {
+        return "Schedule docId =" + idDoc.toString();
+
+    }
+
+    public Map<String, String> sortedMapToPetId(Map<String, String> map) {
+        return map.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
+    }
+
     @PostMapping("/doctors/swap-doctors/{visitDate}/{doctor1Id}/{doctor2Id}")
     @ResponseStatus(HttpStatus.OK)
-    public void swapListDoctors(@PathVariable("visitDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate visitDate,
-                           @PathVariable Integer doctor1Id,
-                           @PathVariable Integer doctor2Id) throws Exception {
+    public Map<String, Object> swapListDoctors(@PathVariable("visitDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate visitDate,
+                                               @PathVariable Integer doctor1Id,
+                                               @PathVariable Integer doctor2Id) throws Exception {
         if (doctorService.findById(doctor1Id).isEmpty()) {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Doctor with id=" + doctor1Id + " not Found");
@@ -98,5 +106,11 @@ public class ScheduleController {
             throw new ResponseStatusException(
                     HttpStatus.NOT_FOUND, "Doctor with id=" + doctor2Id + " not Found");
         } else scheduleService.swapListDoctors(visitDate, doctor1Id, doctor2Id);
+        val doc1HourToPetId = hourToPetId(doctor1Id, visitDate);
+        val doc2HourToPetId = hourToPetId(doctor2Id, visitDate);
+        Map<String, Object> map = new HashMap<>();
+        map.put(idDoc(doctor1Id), doc1HourToPetId);
+        map.put(idDoc(doctor2Id), doc2HourToPetId);
+        return map;
     }
 }
