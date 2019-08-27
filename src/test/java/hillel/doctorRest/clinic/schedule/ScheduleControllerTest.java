@@ -48,8 +48,8 @@ public class ScheduleControllerTest {
         Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
         String idPet1 = ((petRepository.save(new Pet(null, "Donald"))).getId()).toString();
         String idPet2 = ((petRepository.save(new Pet(null, "Tom")).getId())).toString();
-        scheduleRepository.save(new Schedule(null, null, LocalDate.of(2010, 1, 1), idDoctor, "8", idPet1));
-        scheduleRepository.save(new Schedule(null, null, LocalDate.of(2010, 1, 1), idDoctor, "9", idPet2));
+        scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "8", idPet1));
+        scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "9", idPet2));
         mockMvc.perform(MockMvcRequestBuilders.get("/doctors/{doctorId}/schedule/{visitDate}", idDoctor, LocalDate.of(2010, 1, 1)))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("hourToPetId", Matchers.hasEntry("8", idPet1)))
@@ -71,8 +71,8 @@ public class ScheduleControllerTest {
         Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId() + 1;
         String idPet1 = ((petRepository.save(new Pet(null, "Donald"))).getId()).toString();
         String idPet2 = ((petRepository.save(new Pet(null, "Tom")).getId())).toString();
-        scheduleRepository.save(new Schedule(null, null, LocalDate.of(2010, 1, 1), idDoctor, "8", idPet1));
-        scheduleRepository.save(new Schedule(null, null, LocalDate.of(2010, 1, 1), idDoctor, "9", idPet2));
+        scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "8", idPet1));
+        scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "9", idPet2));
         mockMvc.perform(MockMvcRequestBuilders.get("/doctors/{doctorId}/schedule/{visitDate}", idDoctor, LocalDate.of(2010, 1, 1)))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
@@ -100,7 +100,7 @@ public class ScheduleControllerTest {
     public void shouldCreateScheduleNotHour() throws Exception {
         Integer id = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
         String idPet1 = ((petRepository.save(new Pet(null, "Tom")).getId())).toString();
-        scheduleRepository.save(new Schedule(null, null, LocalDate.of(2010, 1, 1), id, "8", idPet1));
+        scheduleRepository.save(new Schedule(null,  LocalDate.of(2010, 1, 1), id, "8", idPet1));
         petRepository.save(new Pet(null, "Tom"));
         mockMvc.perform(MockMvcRequestBuilders.post("/doctors/{doctorId}/schedule/{visitDate}/{hour}", id, LocalDate.of(2010, 1, 1), "8")
                 .contentType("application/json")
@@ -112,10 +112,10 @@ public class ScheduleControllerTest {
     public void shouldSwapListDoctors() throws Exception {
         Integer idDoc1 = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
         String idPet1 = ((petRepository.save(new Pet(null, "Tom")).getId())).toString();
-        scheduleRepository.save(new Schedule(null, null, LocalDate.of(2010, 1, 1), idDoc1, "15", idPet1));
+        scheduleRepository.save(new Schedule(null,LocalDate.of(2010, 1, 1), idDoc1, "15", idPet1));
         Integer idDoc2 = (doctorRepository.save(new Doctor(null, "Jack", Arrays.asList("therapist")))).getId();
         String idPet2 = ((petRepository.save(new Pet(null, "Donald")).getId())).toString();
-        scheduleRepository.save(new Schedule(null, null, LocalDate.of(2010, 1, 1), idDoc2, "14", idPet2));
+        scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoc2, "14", idPet2));
         mockMvc.perform(MockMvcRequestBuilders.post("/doctors/swap-doctors/{visitDate}/{doctor1Id}/{doctor2Id}", LocalDate.of(2010, 1, 1), idDoc1, idDoc2))
                 .andExpect(MockMvcResultMatchers.status().isOk());
         List<Schedule> scheduleDoc1 = scheduleRepository.findByDoctorIdAndVisitDate(idDoc1, LocalDate.of(2010, 1, 1));
@@ -132,10 +132,10 @@ public class ScheduleControllerTest {
     public void shouldSwapDoctorsNotFound() throws Exception {
         Integer idDoc1 = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
         String idPet1 = ((petRepository.save(new Pet(null, "Tom")).getId())).toString();
-        scheduleRepository.save(new Schedule(null, null, LocalDate.of(2010, 1, 1), idDoc1, "15", idPet1));
+        scheduleRepository.save(new Schedule(null,LocalDate.of(2010, 1, 1), idDoc1, "15", idPet1));
         Integer idDoc2 = (doctorRepository.save(new Doctor(null, "Jack", Arrays.asList("therapist")))).getId();
         String idPet2 = ((petRepository.save(new Pet(null, "Donald")).getId())).toString();
-        scheduleRepository.save(new Schedule(null, null, LocalDate.of(2010, 1, 1), idDoc2, "14", idPet2));
+        scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoc2, "14", idPet2));
         mockMvc.perform(MockMvcRequestBuilders.post("/doctors/swap-doctors/{visitDate}/{doctor1Id}/{doctor2Id}", LocalDate.of(2010, 1, 1), idDoc1, idDoc2 + 1))
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
     }
@@ -146,7 +146,7 @@ public class ScheduleControllerTest {
         String idPet1 = ((petRepository.save(new Pet(null, "Tom")).getId())).toString();
         Integer idDoc2 = (doctorRepository.save(new Doctor(null, "Jack", Arrays.asList("therapist")))).getId();
         String idPet2 = ((petRepository.save(new Pet(null, "Donald")).getId())).toString();
-        scheduleRepository.save(new Schedule(null, null, LocalDate.of(2010, 1, 1), idDoc2, "14", idPet2));
+        scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoc2, "14", idPet2));
         mockMvc.perform(MockMvcRequestBuilders.post("/doctors/swap-doctors/{visitDate}/{doctor1Id}/{doctor2Id}", LocalDate.of(2010, 1, 1), idDoc1, idDoc2))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
@@ -155,10 +155,10 @@ public class ScheduleControllerTest {
     public void shouldSwapDoctorNotFoundAvailableHour() throws Exception {
         Integer idDoc1 = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
         String idPet1 = ((petRepository.save(new Pet(null, "Tom")).getId())).toString();
-        scheduleRepository.save(new Schedule(null, null, LocalDate.of(2010, 1, 1), idDoc1, "12", idPet1));
+        scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoc1, "12", idPet1));
         Integer idDoc2 = (doctorRepository.save(new Doctor(null, "Jack", Arrays.asList("therapist")))).getId();
         String idPet2 = ((petRepository.save(new Pet(null, "Donald")).getId())).toString();
-        scheduleRepository.save(new Schedule(null, null, LocalDate.of(2010, 1, 1), idDoc2, "12", idPet2));
+        scheduleRepository.save(new Schedule(null,LocalDate.of(2010, 1, 1), idDoc2, "12", idPet2));
         mockMvc.perform(MockMvcRequestBuilders.post("/doctors/swap-doctors/{visitDate}/{doctor1Id}/{doctor2Id}", LocalDate.of(2010, 1, 1), idDoc1, idDoc2))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }

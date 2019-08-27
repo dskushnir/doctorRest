@@ -32,8 +32,10 @@ public class ScheduleController {
 
 
     @GetMapping("/doctors/{doctorId}/schedule")
-    public List<Schedule> findAll(@PathVariable Integer doctorId) {
-        return scheduleService.findByDoctorId(doctorId);
+    public List<ScheduleOutputDto> findAll(@PathVariable Integer doctorId) {
+        val schedules = scheduleService.findByDoctorId(doctorId);
+        return schedules.stream().map(schedule -> scheduleModelConverter.toDto(schedule))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/doctors/{doctorId}/schedule/{visitDate}")
@@ -42,21 +44,19 @@ public class ScheduleController {
         if (doctorService.findById(doctorId).isEmpty()) {
             throw new DoctorNotFoundException();
         }
-        Map<String, Object> map = new HashMap<>();
-
+        Map<String, Object> map = new TreeMap<>();
         val mapToPetId = (scheduleModelConverter
                 .schedulesToOutputDto(scheduleService
                         .findByDoctorIdAndVisitDate(doctorId, visitDate)))
                 .stream()
                 .collect(Collectors
                         .toMap(ScheduleOutputDto::getHour, ScheduleOutputDto::getPetId));
-        sortedMapToPetId(mapToPetId);
         String methodName = new Object() {
         }
                 .getClass()
                 .getEnclosingMethod()
                 .getName();
-        map.put(methodName, sortedMapToPetId(mapToPetId));
+        map.put(methodName, mapToPetId);
         return map;
     }
 
@@ -72,25 +72,12 @@ public class ScheduleController {
             throw new PetNotFoundException();
         } else if (!visitHoursConfig.getHourName().contains(hour)) {
             throw new HourNotFoundException();
-        } else if (!scheduleService.findByDoctorIdAndVisitDateAndHour(doctorId, visitDate, hour).isEmpty()) {
+        } else if (scheduleService.findByDoctorIdAndVisitDateAndHour(doctorId, visitDate, hour).isPresent()) {
             throw new HourNotFoundAvailableException();
         } else {
             return scheduleService
-                    .createSchedule(doctorId, visitDate, hour, scheduleDtoConverter
-                            .toModel(scheduleInputDto));
+                    .createSchedule(scheduleDtoConverter.toModel(doctorId, visitDate, hour, scheduleInputDto));
         }
-    }
-
-    public String idDoc(Integer idDoc) {
-        return "Schedule docId =" + idDoc.toString();
-
-    }
-
-    public Map<String, String> sortedMapToPetId(Map<String, String> map) {
-        return map.entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                        (oldValue, newValue) -> oldValue, LinkedHashMap::new));
     }
 
     @PostMapping("/doctors/swap-doctors/{visitDate}/{doctor1Id}/{doctor2Id}")
@@ -109,8 +96,8 @@ public class ScheduleController {
         val doc1HourToPetId = hourToPetId(doctor1Id, visitDate);
         val doc2HourToPetId = hourToPetId(doctor2Id, visitDate);
         Map<String, Object> map = new HashMap<>();
-        map.put(idDoc(doctor1Id), doc1HourToPetId);
-        map.put(idDoc(doctor2Id), doc2HourToPetId);
+        map.put(doctor1Id.toString(), doc1HourToPetId);
+        map.put(doctor2Id.toString(), doc2HourToPetId);
         return map;
     }
 }

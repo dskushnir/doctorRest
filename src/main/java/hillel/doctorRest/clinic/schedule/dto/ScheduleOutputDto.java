@@ -7,9 +7,9 @@ import java.time.LocalDate;
 @Data
 public class ScheduleOutputDto {
     private Integer id;
-    private Integer version;
     private LocalDate visitDate;
     private Integer doctorId;
     private String hour;
     private String petId;
+
 }

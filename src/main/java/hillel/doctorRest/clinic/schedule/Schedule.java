@@ -18,8 +18,6 @@ public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Version
-    private Integer version;
     private LocalDate visitDate;
     private Integer doctorId;
     private String hour;

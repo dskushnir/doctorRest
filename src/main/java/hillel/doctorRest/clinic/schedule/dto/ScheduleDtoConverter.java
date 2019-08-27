@@ -3,15 +3,13 @@ package hillel.doctorRest.clinic.schedule.dto;
 import hillel.doctorRest.clinic.schedule.Schedule;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Mappings;
 import org.mapstruct.NullValuePropertyMappingStrategy;
+
+import java.time.LocalDate;
 
 @Mapper(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface ScheduleDtoConverter {
-    @Mappings({@Mapping(target = "id", ignore = true),
-            @Mapping(target = "doctorId", ignore = true),
-            @Mapping(target = "visitDate", ignore = true),
-            @Mapping(target = "hour", ignore = true),
-            @Mapping(target = "version", ignore = true)})
-    Schedule toModel(ScheduleInputDto scheduleInputDto);
+    @Mapping(target = "id", ignore = true)
+    Schedule toModel(Integer doctorId, LocalDate visitDate, String hour, ScheduleInputDto scheduleInputDto);
+
 }
