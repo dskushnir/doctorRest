@@ -21,6 +21,10 @@ public class ScheduleService {
         schedule.setDoctorId(doctorId);
         schedule.setVisitDate(visitDate);
         schedule.setHour(hour);
+        try {
+            Thread.sleep(3500);
+        } catch (InterruptedException e) {
+        }
         return saveSchedule(schedule);
     }
 
