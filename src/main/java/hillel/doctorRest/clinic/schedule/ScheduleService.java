@@ -1,9 +1,12 @@
 package hillel.doctorRest.clinic.schedule;
 
+import hillel.doctorRest.clinic.review.VisitNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -18,6 +21,16 @@ public class ScheduleService {
 
     public Schedule createSchedule(Schedule schedule) {
         return scheduleRepository.save(schedule);
+    }
+    public Optional<Schedule> findById (Integer scheduleId){
+        return scheduleRepository.findById(scheduleId);
+    }
+    public LocalDateTime dateTimeSchedule(Integer scheduleId){
+        if (scheduleRepository.findById(scheduleId).isPresent()){
+            return LocalDateTime.of(scheduleRepository.findById(scheduleId).get().getVisitDate(),
+                    LocalTime.of(Integer.valueOf(findById(scheduleId).get().getHour()),0,0,0));
+        }
+        throw new VisitNotFoundException();
     }
 
     public List<Schedule> findAll() {
