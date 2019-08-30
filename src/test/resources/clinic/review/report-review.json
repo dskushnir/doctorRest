@@ -1,0 +1,14 @@
+[
+{
+  "averageRatingOverall": 4.5,
+  "averageService": 4.5,
+  "averageEffectivenessOfTreatment": 4.5,
+  "averageEquipment": 4.5,
+  "averageQualificationSpecialist": 4.5
+},
+{
+"2019-01-01T12:00:00": [
+  "good", "very good"
+]
+}
+]

@@ -6,5 +6,5 @@ import java.util.List;
 
 @Mapper
 public interface ReportDtoConverter {
-     List<Object> toDtoReportReview(List<Object> reportReview);
+    List< Object> toDtoReportReview(List<Object> reportReview);
 }

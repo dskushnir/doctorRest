@@ -1,23 +1,17 @@
 package hillel.doctorRest.clinic.review;
 
 import hillel.doctorRest.clinic.review.dto.*;
-import hillel.doctorRest.clinic.schedule.Schedule;
 import hillel.doctorRest.clinic.schedule.ScheduleService;
-import hillel.doctorRest.clinic.schedule.dto.ScheduleInputDto;
-import hillel.doctorRest.clinic.schedule.dto.ScheduleOutputDto;
 import lombok.AllArgsConstructor;
 import lombok.val;
 import org.hibernate.StaleObjectStateException;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Clock;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -32,9 +26,9 @@ public class ReviewController {
 
     @GetMapping("/schedule/review/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public Review findById(@PathVariable Integer id) {
+    public ReviewOutputDto findById(@PathVariable Integer id) {
         val mayBeReview = reviewService.findById(id);
-        return mayBeReview.orElseThrow(ReviewNotFoundException::new);
+        return reviewModelConverter.reviewToDto(mayBeReview.orElseThrow(ReviewNotFoundException::new));
     }
 
     @GetMapping("/schedule/review")
@@ -52,26 +46,42 @@ public class ReviewController {
             throw new VisitNotFoundException();
         } else if (scheduleService.dateTimeSchedule(scheduleId).isAfter(LocalDateTime.now(clock))) {
             throw new DateTimeReviewIncorrectException();
-        } else return reviewService.createReview(reviewDtoConverter
-                .toModel(scheduleId, reviewInputDto, LocalDateTime.now(clock)));
+        } else isValidInputDto(reviewInputDto);
+            return reviewService.createReview(reviewDtoConverter
+                    .toModel(scheduleId, reviewInputDto, LocalDateTime.now(clock)));
+    }
+
+    public boolean isValidInputDto (ReviewInputDto reviewInputDto){
+        if(reviewInputDto.getService().filter(x->x>5).isPresent()){
+            throw new ServiceIncorrectRatingException();
+        }else if(reviewInputDto.getEquipment().filter(x->x>5).isPresent()){
+            throw new EquipmentRatingException();
+        }else if (reviewInputDto.getQualificationSpecialist().filter(x->x>5).isPresent()){
+            throw  new QualificationSpecialistRatingException();
+        }else if (reviewInputDto.getEffectivenessOfTreatment().filter(x->x>5).isPresent()){
+            throw new EffectivenessOfTreatmentRatingExeption();
+        }else if (reviewInputDto.getRatingOverall().filter(x->x>5).isPresent()){
+            throw new RatingOverallExceptional();
+        }else {
+            return false;
+        }
     }
 
     @PatchMapping("/schedule/review/{id}")
     @Retryable(StaleObjectStateException.class)
-    public void patch(@RequestBody ReviewInputDto reviewInputDto,
+    public void patchReview (@RequestBody ReviewInputDto reviewInputDto,
                       @PathVariable Integer id) {
         if (reviewService.findById(id).isEmpty()) {
             throw new ReviewNotFoundException();
-        } else {
-            val review = reviewService.findById(id).get();
-            reviewDtoConverter.update(review, reviewInputDto);
-            reviewService.saveReview(review);
+        }else isValidInputDto(reviewInputDto);
+            val reviewBase = reviewService.findById(id).get();
+            reviewDtoConverter.update(reviewBase, reviewInputDto);
+            reviewService.saveReview(reviewBase);
         }
     }
 
 
 
-}
 
 
 

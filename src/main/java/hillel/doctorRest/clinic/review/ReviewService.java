@@ -19,8 +19,8 @@ private final ReviewRepository reviewRepository;
     public Review createReview(Review review) {
         return reviewRepository.save(review);
     }
-    public Review saveReview (Review review){
-        return reviewRepository.save(review);
+    public void saveReview (Review review){
+        reviewRepository.save(review);
     }
     public Optional<Review>findById(Integer id){
         return reviewRepository.findById(id);
@@ -54,11 +54,20 @@ private final ReviewRepository reviewRepository;
         map.put("averageEffectivenessOfTreatment",averageEffectivenessOfTreatment());
         map.put("averageRatingOverall",averageRatingOverall());
         return map;
+
     }
-    public Map<LocalDateTime,Optional<String>>mapDateToComment(){
-        return   findAll().stream().filter(review -> review.getComment().isPresent())
-                .collect(Collectors.toMap(Review::getLocalDateTimeReview, Review::getComment));
+    public Map<LocalDateTime,List<String>>mapDateToComment(){
+      return findAll().stream().filter(review -> review.getComment().isPresent()).collect(Collectors.groupingBy(Review::getLocalDateTimeReview,Collectors.flatMapping(review->review.getComment().stream(),
+                        Collectors.toList())));
+
+
     }
+  /*  public Map<LocalDateTime,Optional<String>>mapDateToComment(){
+        return   findAll().stream().filter(review -> review.getComment().isPresent()).
+                collect(Collectors.toMap(Review::getLocalDateTimeReview,Review::getComment)
+                );
+
+    }*/
     public List<Object>reportReview (){
         val list=new ArrayList<Object>();
         list.add(mapCriterionToAverage());
