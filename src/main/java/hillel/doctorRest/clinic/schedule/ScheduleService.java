@@ -1,10 +1,14 @@
 package hillel.doctorRest.clinic.schedule;
 
+import hillel.doctorRest.clinic.review.VisitNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import lombok.val;
@@ -14,14 +18,18 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
-
-    public Schedule createSchedule(Integer doctorId,
-                                   LocalDate visitDate,
-                                   String hour, Schedule schedule) {
-        schedule.setDoctorId(doctorId);
-        schedule.setVisitDate(visitDate);
-        schedule.setHour(hour);
-        return saveSchedule(schedule);
+    public Schedule createSchedule(Schedule schedule) {
+        return scheduleRepository.save(schedule);
+    }
+    public Optional<Schedule> findById (Integer scheduleId){
+        return scheduleRepository.findById(scheduleId);
+    }
+    public LocalDateTime dateTimeSchedule(Integer scheduleId){
+        if (scheduleRepository.findById(scheduleId).isPresent()){
+            return LocalDateTime.of(scheduleRepository.findById(scheduleId).get().getVisitDate(),
+                    LocalTime.of(Integer.valueOf(findById(scheduleId).get().getHour()),0,0,0));
+        }
+        throw new VisitNotFoundException();
     }
 
     public List<Schedule> findAll() {
@@ -37,12 +45,11 @@ public class ScheduleService {
         return scheduleRepository.findByDoctorIdAndVisitDate(id, visitDate);
     }
 
-    public List<Schedule> findByDoctorIdAndVisitDateAndHour(Integer doctorId,
-                                                            LocalDate visitDate,
-                                                            String hour) {
+    public Optional<Schedule> findByDoctorIdAndVisitDateAndHour(Integer doctorId,
+                                                                LocalDate visitDate,
+                                                                String hour) {
         return scheduleRepository.findByDoctorIdAndVisitDateAndHour(doctorId, visitDate, hour);
     }
-
     @Transactional(rollbackFor = Exception.class)
     public void swapListDoctors(LocalDate visitDate, Integer doctor1Id, Integer doctor2Id) throws Exception {
         val scheduleDoctor1 = findByDoctorIdAndVisitDate(doctor1Id, visitDate);
