@@ -11,6 +11,7 @@ public class ReviewInputDto {
     private Integer effectivenessOfTreatment;
     private Integer ratingOverall;
     private String comment;
+
     public Optional<Integer> getService() {
         return Optional.ofNullable(service);
     }

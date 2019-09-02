@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -46,13 +47,7 @@ public class ReviewController {
             throw new VisitNotFoundException();
         } else if (scheduleService.dateTimeSchedule(scheduleId).isAfter(LocalDateTime.now(clock))) {
             throw new DateTimeReviewIncorrectException();
-        } else isValidInputDto(reviewInputDto);
-            return reviewService.createReview(reviewDtoConverter
-                    .toModel(scheduleId, reviewInputDto, LocalDateTime.now(clock)));
-    }
-
-    public boolean isValidInputDto (ReviewInputDto reviewInputDto){
-        if(reviewInputDto.getService().filter(x->x>5).isPresent()){
+        }  else if(reviewInputDto.getService().filter(x->x>5).isPresent()){
             throw new ServiceIncorrectRatingException();
         }else if(reviewInputDto.getEquipment().filter(x->x>5).isPresent()){
             throw new EquipmentRatingException();
@@ -60,25 +55,38 @@ public class ReviewController {
             throw  new QualificationSpecialistRatingException();
         }else if (reviewInputDto.getEffectivenessOfTreatment().filter(x->x>5).isPresent()){
             throw new EffectivenessOfTreatmentRatingExeption();
-        }else if (reviewInputDto.getRatingOverall().filter(x->x>5).isPresent()){
+        }else if (reviewInputDto.getRatingOverall().filter(x->x>5).isPresent()) {
             throw new RatingOverallExceptional();
         }else {
-            return false;
+            return reviewService.createReview(reviewDtoConverter
+                    .toModel(scheduleId, reviewInputDto, LocalDateTime.now(clock)));
         }
     }
 
     @PatchMapping("/schedule/review/{id}")
     @Retryable(StaleObjectStateException.class)
-    public void patchReview (@RequestBody ReviewInputDto reviewInputDto,
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void patchReview (@RequestBody ReviewInputForUpdateDto reviewInputForUpdateDto,
                       @PathVariable Integer id) {
         if (reviewService.findById(id).isEmpty()) {
             throw new ReviewNotFoundException();
-        }else isValidInputDto(reviewInputDto);
+        } else if (reviewInputForUpdateDto.getService() > 5) {
+            throw new ServiceIncorrectRatingException();
+        } else if (reviewInputForUpdateDto.getEquipment() > 5) {
+            throw new EquipmentRatingException();
+        } else if (reviewInputForUpdateDto.getQualificationSpecialist() > 5) {
+            throw new QualificationSpecialistRatingException();
+        } else if (reviewInputForUpdateDto.getEffectivenessOfTreatment() > 5) {
+            throw new EffectivenessOfTreatmentRatingExeption();
+        } else if (reviewInputForUpdateDto.getRatingOverall() > 5) {
+            throw new RatingOverallExceptional();
+        } else {
             val reviewBase = reviewService.findById(id).get();
-            reviewDtoConverter.update(reviewBase, reviewInputDto);
+            reviewDtoConverter.update(reviewBase, reviewInputForUpdateDto);
             reviewService.saveReview(reviewBase);
         }
     }
+}
 
 
 

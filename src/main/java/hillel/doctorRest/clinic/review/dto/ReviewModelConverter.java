@@ -12,6 +12,7 @@ import java.util.Optional;
 public interface ReviewModelConverter {
     ReviewOutputDto reviewToDto(Review review);
     List<ReviewOutputDto>reviewsToOutputDto(List<Review>reviews);
+
     default <T> T unpack(Optional<T> maybe){
         return maybe.orElse(null);
     }
