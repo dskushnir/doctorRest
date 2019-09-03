@@ -9,10 +9,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.Clock;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
 @AllArgsConstructor
@@ -47,17 +48,17 @@ public class ReviewController {
             throw new VisitNotFoundException();
         } else if (scheduleService.dateTimeSchedule(scheduleId).isAfter(LocalDateTime.now(clock))) {
             throw new DateTimeReviewIncorrectException();
-        }  else if(reviewInputDto.getService().filter(x->x>5).isPresent()){
+        } else if (reviewInputDto.getService().filter(x -> x > 5).isPresent()) {
             throw new ServiceIncorrectRatingException();
-        }else if(reviewInputDto.getEquipment().filter(x->x>5).isPresent()){
+        } else if (reviewInputDto.getEquipment().filter(x -> x > 5).isPresent()) {
             throw new EquipmentRatingException();
-        }else if (reviewInputDto.getQualificationSpecialist().filter(x->x>5).isPresent()){
-            throw  new QualificationSpecialistRatingException();
-        }else if (reviewInputDto.getEffectivenessOfTreatment().filter(x->x>5).isPresent()){
+        } else if (reviewInputDto.getQualificationSpecialist().filter(x -> x > 5).isPresent()) {
+            throw new QualificationSpecialistRatingException();
+        } else if (reviewInputDto.getEffectivenessOfTreatment().filter(x -> x > 5).isPresent()) {
             throw new EffectivenessOfTreatmentRatingExeption();
-        }else if (reviewInputDto.getRatingOverall().filter(x->x>5).isPresent()) {
+        } else if (reviewInputDto.getRatingOverall().filter(x -> x > 5).isPresent()) {
             throw new RatingOverallExceptional();
-        }else {
+        } else {
             return reviewService.createReview(reviewDtoConverter
                     .toModel(scheduleId, reviewInputDto, LocalDateTime.now(clock)));
         }
@@ -66,27 +67,18 @@ public class ReviewController {
     @PatchMapping("/schedule/review/{id}")
     @Retryable(StaleObjectStateException.class)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void patchReview (@RequestBody ReviewInputForUpdateDto reviewInputForUpdateDto,
-                      @PathVariable Integer id) {
+    public void patchReview(@Valid @RequestBody ReviewInputForUpdateDto reviewInputForUpdateDto,
+                            @PathVariable Integer id) {
         if (reviewService.findById(id).isEmpty()) {
             throw new ReviewNotFoundException();
-        } else if (reviewInputForUpdateDto.getService() > 5) {
-            throw new ServiceIncorrectRatingException();
-        } else if (reviewInputForUpdateDto.getEquipment() > 5) {
-            throw new EquipmentRatingException();
-        } else if (reviewInputForUpdateDto.getQualificationSpecialist() > 5) {
-            throw new QualificationSpecialistRatingException();
-        } else if (reviewInputForUpdateDto.getEffectivenessOfTreatment() > 5) {
-            throw new EffectivenessOfTreatmentRatingExeption();
-        } else if (reviewInputForUpdateDto.getRatingOverall() > 5) {
-            throw new RatingOverallExceptional();
-        } else {
-            val reviewBase = reviewService.findById(id).get();
-            reviewDtoConverter.update(reviewBase, reviewInputForUpdateDto);
-            reviewService.saveReview(reviewBase);
         }
+        val reviewBase = reviewService.findById(id).get();
+        reviewDtoConverter.update(reviewBase, reviewInputForUpdateDto);
+        reviewService.saveReview(reviewBase);
     }
 }
+
+
 
 
 
