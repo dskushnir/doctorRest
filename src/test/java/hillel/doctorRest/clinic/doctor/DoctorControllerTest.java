@@ -76,6 +76,16 @@ public class DoctorControllerTest {
     }
 
     @Test
+    public void shouldUpdateDoctorInvalidId() throws Exception {
+        Integer id = doctorRepository.save(new Doctor(null, "Jack", Arrays.asList("therapist"))).getId();
+        doctorRepository.save(new Doctor(null, "Adam", Arrays.asList("therapist")));
+        mockMvc.perform(MockMvcRequestBuilders.put("/doctors/{id}", 0)
+                .contentType("application/json")
+                .content(fromResource("clinic/doctor/update-doctors.json")))
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
+    }
+
+    @Test
     public void shouldDeleteDoctor() throws Exception {
         Integer id = doctorRepository.save(new Doctor(null, "Jack",Arrays.asList("surgeon"))).getId();
         doctorRepository.save(new Doctor(null, "Adam", Arrays.asList("therapist")));

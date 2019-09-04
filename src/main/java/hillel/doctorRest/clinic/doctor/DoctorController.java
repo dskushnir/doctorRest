@@ -15,6 +15,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -27,16 +30,16 @@ public class DoctorController {
     private final DoctorDtoConverter doctorDtoConverter;
     private final DoctorModelConverter doctorModelConverter;
     private final UriComponentsBuilder uriBuilder;
-    private SpecializationConfig specializationConfig;
+   // private SpecializationConfig specializationConfig;
 
 
     public DoctorController(DoctorService doctorService, DoctorDtoConverter doctorDtoConverter,
-                            DoctorModelConverter doctorModelConverter, SpecializationConfig specializationConfig,
+                            DoctorModelConverter doctorModelConverter,/* SpecializationConfig specializationConfig,*/
                             @Value("${clinic.host-name:localhost}") String hostName) {
         this.doctorService = doctorService;
         this.doctorDtoConverter = doctorDtoConverter;
         this.doctorModelConverter = doctorModelConverter;
-        this.specializationConfig = specializationConfig;
+      //  this.specializationConfig = specializationConfig;
         uriBuilder = UriComponentsBuilder.newInstance()
                 .scheme("http")
                 .host(hostName)
@@ -65,25 +68,24 @@ public class DoctorController {
     }
 
     @PostMapping("/doctors")
-    public ResponseEntity<Object> createDoctor(@RequestBody DoctorInputDto dto) {
-        if (specializationConfig.getSpecializationName().containsAll(dto.getSpecializations())) {
+    public ResponseEntity<Object> createDoctor(@Valid @RequestBody DoctorInputDto dto) {
+        val created = doctorService.createDoctor(doctorDtoConverter.toModel(dto));
+        return ResponseEntity.created(uriBuilder.build(created.getId())).build();
+      /*  if (specializationConfig.getSpecializationName().containsAll(dto.getSpecializations())) {
             val created = doctorService.createDoctor(doctorDtoConverter.toModel(dto));
             return ResponseEntity.created(uriBuilder.build(created.getId())).build();
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }
+        }*/
     }
 
     @PutMapping("/doctors/{id}")
-    public ResponseEntity<?> updateDoctor(@RequestBody DoctorInputDto dto,
+    public ResponseEntity<?> updateDoctor(@Valid @RequestBody DoctorInputDto dto,
                                           @PathVariable Integer id) {
-        if (!specializationConfig.getSpecializationName().containsAll(dto.getSpecializations())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        } else {
-            val doctor = doctorDtoConverter.toModel(dto, id);
-            doctorService.update(doctor);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
+        var doctor1 = doctorService.findById(id).orElseThrow(DoctorNotFoundException::new);
+        doctorDtoConverter.update(doctor1, dto);
+        doctorService.save(doctor1);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping("/doctors/{id}")

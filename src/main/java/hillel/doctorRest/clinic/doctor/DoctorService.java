@@ -37,7 +37,7 @@ public class DoctorService {
         return doctorRepository.save(doctor);
     }
 
-    public void update(Doctor doctor) {
+    public void save (Doctor doctor) {
         doctorRepository.save(doctor);
     }
 
