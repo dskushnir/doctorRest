@@ -63,12 +63,12 @@ public class ReviewControllerTest {
         reviewRepository.save(new Review(null, null, idSchedule2, LocalDateTime.now(clock), 5, 5, 5, 5, 5, "very good"));
         mockMvc.perform(MockMvcRequestBuilders.get("/schedule/review"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0]", Matchers.hasEntry("averageRatingOverall", 4.5)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0]", Matchers.hasEntry("averageService", 4.5)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0]", Matchers.hasEntry("averageEffectivenessOfTreatment", 4.5)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0]", Matchers.hasEntry("averageEquipment", 4.5)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0]", Matchers.hasEntry("averageQualificationSpecialist", 4.5)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[1]", Matchers.hasValue(Matchers.contains("good", "very good"))));
+                .andExpect(MockMvcResultMatchers.jsonPath("averageService", Matchers.is(4.5)))
+                .andExpect(MockMvcResultMatchers.jsonPath("averageEquipment", Matchers.is(4.5)))
+                .andExpect(MockMvcResultMatchers.jsonPath("averageQualificationSpecialist", Matchers.is(4.5)))
+                .andExpect(MockMvcResultMatchers.jsonPath("averageEffectivenessOfTreatment", Matchers.is(4.5)))
+                .andExpect(MockMvcResultMatchers.jsonPath("averageRatingOverall", Matchers.is(4.5)))
+                .andExpect(MockMvcResultMatchers.jsonPath("mapDateToComment", Matchers.hasValue(Matchers.contains("good", "very good"))));
 
     }
 

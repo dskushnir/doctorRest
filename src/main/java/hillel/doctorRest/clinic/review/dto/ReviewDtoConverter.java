@@ -20,7 +20,6 @@ public interface ReviewDtoConverter {
     @Mapping(target = "localDateTimeReview", ignore = true)
     Review toModel(ReviewInputForUpdateDto reviewInputForUpdateDto);
 
-
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "version", ignore = true)
     @Mapping(target = "scheduleId", ignore = true)

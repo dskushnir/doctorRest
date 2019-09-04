@@ -23,41 +23,33 @@ public class ReviewController {
     private final ScheduleService scheduleService;
     private final ReviewDtoConverter reviewDtoConverter;
     private final ReviewModelConverter reviewModelConverter;
-    private final ReportDtoConverter reportDtoConverter;
     private Clock clock;
 
     @GetMapping("/schedule/review/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ReviewOutputDto findById(@PathVariable Integer id) {
         val mayBeReview = reviewService.findById(id);
-        return reviewModelConverter.reviewToDto(mayBeReview.orElseThrow(ReviewNotFoundException::new));
+        return reviewModelConverter.reviewToDto(mayBeReview
+                .orElseThrow(ReviewNotFoundException::new));
     }
 
     @GetMapping("/schedule/review")
     @ResponseStatus(HttpStatus.OK)
-    public List<Object> reportReview() {
-        val reports = reviewService.reportReview();
-        return reportDtoConverter.toDtoReportReview(reports);
+    public ReportOutputDto reportView() {
+        ReviewService.Report report = reviewService.new Report();
+        return reviewModelConverter
+                .reportToDto(report.initReport(report));
     }
 
     @PostMapping("/schedule/{scheduleId}/review")
     @ResponseStatus(HttpStatus.CREATED)
     public Review createReview(@PathVariable Integer scheduleId,
-                               @RequestBody ReviewInputDto reviewInputDto) {
+                               @Valid @RequestBody ReviewInputDto reviewInputDto) {
         if (scheduleService.findById(scheduleId).isEmpty()) {
             throw new VisitNotFoundException();
-        } else if (scheduleService.dateTimeSchedule(scheduleId).isAfter(LocalDateTime.now(clock))) {
+        } else if (scheduleService.dateTimeSchedule(scheduleId)
+                .isAfter(LocalDateTime.now(clock))) {
             throw new DateTimeReviewIncorrectException();
-        } else if (reviewInputDto.getService().filter(x -> x > 5).isPresent()) {
-            throw new ServiceIncorrectRatingException();
-        } else if (reviewInputDto.getEquipment().filter(x -> x > 5).isPresent()) {
-            throw new EquipmentRatingException();
-        } else if (reviewInputDto.getQualificationSpecialist().filter(x -> x > 5).isPresent()) {
-            throw new QualificationSpecialistRatingException();
-        } else if (reviewInputDto.getEffectivenessOfTreatment().filter(x -> x > 5).isPresent()) {
-            throw new EffectivenessOfTreatmentRatingExeption();
-        } else if (reviewInputDto.getRatingOverall().filter(x -> x > 5).isPresent()) {
-            throw new RatingOverallExceptional();
         } else {
             return reviewService.createReview(reviewDtoConverter
                     .toModel(scheduleId, reviewInputDto, LocalDateTime.now(clock)));
