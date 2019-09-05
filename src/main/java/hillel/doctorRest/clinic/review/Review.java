@@ -29,6 +29,17 @@ public class Review {
     private Integer ratingOverall;
     private String comment;
 
+    public Review(Integer scheduleId, LocalDateTime localDateTimeReview, Integer service, Integer equipment, Integer qualificationSpecialist, Integer effectivenessOfTreatment, Integer ratingOverall, String comment) {
+        this.scheduleId = scheduleId;
+        this.localDateTimeReview = localDateTimeReview;
+        this.service = service;
+        this.equipment = equipment;
+        this.qualificationSpecialist = qualificationSpecialist;
+        this.effectivenessOfTreatment = effectivenessOfTreatment;
+        this.ratingOverall = ratingOverall;
+        this.comment = comment;
+    }
+
     public Optional<Integer> getService() {
         return Optional.ofNullable(service);
     }

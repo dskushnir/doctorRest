@@ -13,9 +13,13 @@ public class SpecializationNameValidator implements ConstraintValidator<Speciali
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return value==null || doSpecializationNameCheck(value, specializationConfig);
+        return doSpecializationNameCheck(value, specializationConfig);
     }
-    public boolean doSpecializationNameCheck(String specializationName, SpecializationConfig specializationConfig){
-        return specializationConfig.getSpecializationName().contains(specializationName);
+    public boolean doSpecializationNameCheck(String specializationName, SpecializationConfig specializationConfig) {
+        if (specializationConfig.getSpecializationName().contains(specializationName)) {
+            return true;
+        }
+        return false;
     }
+
 }
