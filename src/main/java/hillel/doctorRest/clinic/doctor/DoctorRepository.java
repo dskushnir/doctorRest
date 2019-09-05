@@ -1,6 +1,8 @@
 package hillel.doctorRest.clinic.doctor;
 
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,13 +14,13 @@ import java.util.*;
 @Repository
 public interface DoctorRepository extends JpaRepository<Doctor, Integer> {
     @Query("select doctor from Doctor as doctor  where  doctor.name=:name and doctor.specializations In (:specializations)")
-    List<Doctor> findByParameter(@Param("name") String name,
-                                 @Param("specializations") List<String> specializations);
+    Page<Doctor> findByParameter(@Param("name") String name,
+                                 @Param("specializations") List<String> specializations, Pageable pageable);
 
 
-    List<Doctor> findByNameIgnoreCase(String name);
+    Page<Doctor> findByNameIgnoreCase(String name,Pageable pageable);
 
-    List<Doctor> findBySpecializationsIn(List<String> specializations);
+    Page<Doctor> findBySpecializationsIn(List<String> specializations,Pageable pageable);
 
 
 }

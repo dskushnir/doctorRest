@@ -1,6 +1,5 @@
 package hillel.doctorRest.clinic.doctor;
 
-import hillel.doctorRest.clinic.SpecializationConfig;
 import hillel.doctorRest.clinic.doctor.dto.DoctorDtoConverter;
 import hillel.doctorRest.clinic.doctor.dto.DoctorInputDto;
 import hillel.doctorRest.clinic.doctor.dto.DoctorModelConverter;
@@ -10,18 +9,16 @@ import hillel.doctorRest.clinic.doctor.dto.DoctorOutputDto;
 import lombok.val;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 
 @RestController
 
@@ -30,16 +27,13 @@ public class DoctorController {
     private final DoctorDtoConverter doctorDtoConverter;
     private final DoctorModelConverter doctorModelConverter;
     private final UriComponentsBuilder uriBuilder;
-   // private SpecializationConfig specializationConfig;
-
 
     public DoctorController(DoctorService doctorService, DoctorDtoConverter doctorDtoConverter,
-                            DoctorModelConverter doctorModelConverter,/* SpecializationConfig specializationConfig,*/
+                            DoctorModelConverter doctorModelConverter,
                             @Value("${clinic.host-name:localhost}") String hostName) {
         this.doctorService = doctorService;
         this.doctorDtoConverter = doctorDtoConverter;
         this.doctorModelConverter = doctorModelConverter;
-      //  this.specializationConfig = specializationConfig;
         uriBuilder = UriComponentsBuilder.newInstance()
                 .scheme("http")
                 .host(hostName)
@@ -55,28 +49,21 @@ public class DoctorController {
     }
 
     @GetMapping("/doctors")
-    public List<DoctorOutputDto> findAll(
+    public Page<DoctorOutputDto> findAll(
             @RequestParam Optional<String> name,
-            @RequestParam Optional<List<String>> specializations) {
-        val doctors = doctorService.findAll(name, specializations);
-        if (doctors.size() == 0) {
+            @RequestParam Optional<List<String>> specializations, Pageable pageable) {
+        val doctors = doctorService.findAll(name, specializations, pageable);
+        if (doctors.getTotalElements() == 0) {
             throw new DoctorNotFoundException();
         }
-        return doctors.stream()
-                .map(doc -> doctorModelConverter.toDto(doc))
-                .collect(Collectors.toList());
+        return doctors
+                .map(doctor -> doctorModelConverter.toDto(doctor));
     }
 
     @PostMapping("/doctors")
     public ResponseEntity<Object> createDoctor(@Valid @RequestBody DoctorInputDto dto) {
         val created = doctorService.createDoctor(doctorDtoConverter.toModel(dto));
         return ResponseEntity.created(uriBuilder.build(created.getId())).build();
-      /*  if (specializationConfig.getSpecializationName().containsAll(dto.getSpecializations())) {
-            val created = doctorService.createDoctor(doctorDtoConverter.toModel(dto));
-            return ResponseEntity.created(uriBuilder.build(created.getId())).build();
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        }*/
     }
 
     @PutMapping("/doctors/{id}")
