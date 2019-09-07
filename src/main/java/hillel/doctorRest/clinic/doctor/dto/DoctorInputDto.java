@@ -11,13 +11,11 @@ import java.util.List;
 
 @Data
 public class DoctorInputDto {
-    @NotNull
-    @NotEmpty
     @NotBlank
     private String name;
     @NotNull
     @Size(min = 1)
-    private List<@NotNull @NotBlank @SpecializationName String> specializations;
+    private List<@SpecializationName String> specializations;
 }
 
 
