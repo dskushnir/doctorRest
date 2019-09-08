@@ -1,9 +1,12 @@
 package hillel.doctorRest.clinic.schedule;
 
+import hillel.doctorRest.clinic.review.VisitNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -15,9 +18,18 @@ import org.springframework.transaction.annotation.Transactional;
 @AllArgsConstructor
 public class ScheduleService {
     private final ScheduleRepository scheduleRepository;
-
     public Schedule createSchedule(Schedule schedule) {
         return scheduleRepository.save(schedule);
+    }
+    public Optional<Schedule> findById (Integer scheduleId){
+        return scheduleRepository.findById(scheduleId);
+    }
+    public LocalDateTime dateTimeSchedule(Integer scheduleId){
+        if (scheduleRepository.findById(scheduleId).isPresent()){
+            return LocalDateTime.of(scheduleRepository.findById(scheduleId).get().getVisitDate(),
+                    LocalTime.of(Integer.valueOf(findById(scheduleId).get().getHour()),0,0,0));
+        }
+        throw new VisitNotFoundException();
     }
 
     public List<Schedule> findAll() {
@@ -38,9 +50,8 @@ public class ScheduleService {
                                                                 String hour) {
         return scheduleRepository.findByDoctorIdAndVisitDateAndHour(doctorId, visitDate, hour);
     }
-
-    @Transactional
-    public void swapListDoctors(LocalDate visitDate, Integer doctor1Id, Integer doctor2Id) {
+    @Transactional(rollbackFor = Exception.class)
+    public void swapListDoctors(LocalDate visitDate, Integer doctor1Id, Integer doctor2Id) throws Exception {
         val scheduleDoctor1 = findByDoctorIdAndVisitDate(doctor1Id, visitDate);
         val scheduleDoctor2 = findByDoctorIdAndVisitDate(doctor2Id, visitDate);
         val hoursDoctor1 = scheduleDoctor1.stream().map(Schedule::getHour).collect(Collectors.toList());
@@ -52,6 +63,10 @@ public class ScheduleService {
             throw new DoctorIsBusyException();
         }
         scheduleDoctor1.forEach(schedule -> schedule.setDoctorId(doctor2Id));
-        scheduleDoctor1.forEach(schedule -> createSchedule(schedule));
+        scheduleDoctor1.forEach(schedule -> saveSchedule(schedule));
+    }
+
+    public Schedule saveSchedule(Schedule schedule) {
+        return scheduleRepository.save(schedule);
     }
 }
