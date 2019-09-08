@@ -13,8 +13,7 @@ import java.util.List;
 public class DoctorInputDto {
     @NotBlank
     private String name;
-    @NotNull
-    @Size(min = 1)
+    @NotEmpty
     private List<@SpecializationName String> specializations;
 }
 
