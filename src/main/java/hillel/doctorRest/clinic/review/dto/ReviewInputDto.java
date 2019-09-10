@@ -1,21 +1,22 @@
 package hillel.doctorRest.clinic.review.dto;
 
 import lombok.Data;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.Max;
 import java.util.Optional;
 
 @Data
 public class ReviewInputDto {
-    @Max(5)
+    @Range(min = 1,max = 5)
     private Integer service;
-    @Max(5)
+    @Range(min = 1,max = 5)
     private Integer equipment;
-    @Max(5)
+    @Range(min = 1,max = 5)
     private Integer qualificationSpecialist;
-    @Max(5)
+    @Range(min = 1,max = 5)
     private Integer effectivenessOfTreatment;
-    @Max(5)
+    @Range(min = 1,max = 5)
     private Integer ratingOverall;
     private String comment;
 

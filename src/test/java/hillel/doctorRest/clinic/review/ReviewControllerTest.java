@@ -54,13 +54,13 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldReportReview() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
-        String idPet1 = ((petRepository.save(new Pet(null, "Donald"))).getId()).toString();
-        String idPet2 = ((petRepository.save(new Pet(null, "Tom"))).getId()).toString();
-        Integer idSchedule1 = (scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "8", idPet1))).getId();
-        Integer idSchedule2 = (scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "9", idPet2))).getId();
-        reviewRepository.save(new Review(null, null, idSchedule1, LocalDateTime.now(clock), 4, 4, 4, 4, 4, "good"));
-        reviewRepository.save(new Review(null, null, idSchedule2, LocalDateTime.now(clock), 5, 5, 5, 5, 5, "very good"));
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        String idPet1 = ((petRepository.save(new Pet("Donald"))).getId()).toString();
+        String idPet2 = ((petRepository.save(new Pet("Tom"))).getId()).toString();
+        Integer idSchedule1 = (scheduleRepository.save(new Schedule(LocalDate.of(2010, 1, 1), idDoctor, "8", idPet1))).getId();
+        Integer idSchedule2 = (scheduleRepository.save(new Schedule(LocalDate.of(2010, 1, 1), idDoctor, "9", idPet2))).getId();
+        reviewRepository.save(new Review(idSchedule1, LocalDateTime.now(clock), 4, 4, 4, 4, 4, "good"));
+        reviewRepository.save(new Review(idSchedule2, LocalDateTime.now(clock), 5, 5, 5, 5, 5, "very good"));
         mockMvc.perform(MockMvcRequestBuilders.get("/schedule/review"))
                 .andExpect(MockMvcResultMatchers.status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("averageService", Matchers.is(4.5)))
@@ -74,9 +74,9 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldCreateReview() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
-        String idPet = ((petRepository.save(new Pet(null, "Donald"))).getId()).toString();
-        Integer idSchedule = (scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId();
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        String idPet = ((petRepository.save(new Pet("Donald"))).getId()).toString();
+        Integer idSchedule = (scheduleRepository.save(new Schedule(LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId();
         mockMvc.perform(MockMvcRequestBuilders.post("/schedule/{scheduleId}/review", idSchedule)
                 .contentType("application/json")
                 .content(fromResource("clinic/review/review-create.json")))
@@ -85,9 +85,9 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldCreateReviewNotFoundVisit() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
-        String idPet = ((petRepository.save(new Pet(null, "Donald"))).getId()).toString();
-        Integer idSchedule = (scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId() + 1;
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        String idPet = ((petRepository.save(new Pet("Donald"))).getId()).toString();
+        Integer idSchedule = (scheduleRepository.save(new Schedule(LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId() + 1;
         mockMvc.perform(MockMvcRequestBuilders.post("/schedule/{scheduleId}/review", idSchedule)
                 .contentType("application/json")
                 .content(fromResource("clinic/review/review-create.json")))
@@ -96,9 +96,9 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldCreateReviewIncorrectDate() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
-        String idPet = ((petRepository.save(new Pet(null, "Donald"))).getId()).toString();
-        Integer idSchedule = (scheduleRepository.save(new Schedule(null, LocalDate.of(2020, 1, 1), idDoctor, "8", idPet))).getId();
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        String idPet = ((petRepository.save(new Pet("Donald"))).getId()).toString();
+        Integer idSchedule = (scheduleRepository.save(new Schedule(LocalDate.of(2020, 1, 1), idDoctor, "8", idPet))).getId();
         mockMvc.perform(MockMvcRequestBuilders.post("/schedule/{scheduleId}/review", idSchedule)
                 .contentType("application/json")
                 .content(fromResource("clinic/review/review-create.json")))
@@ -107,9 +107,9 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldCreateReviewIncorrectRating() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
-        String idPet = ((petRepository.save(new Pet(null, "Donald"))).getId()).toString();
-        Integer idSchedule = (scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId();
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        String idPet = ((petRepository.save(new Pet("Donald"))).getId()).toString();
+        Integer idSchedule = (scheduleRepository.save(new Schedule(LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId();
         mockMvc.perform(MockMvcRequestBuilders.post("/schedule/{scheduleId}/review", idSchedule)
                 .contentType("application/json")
                 .content(fromResource("clinic/review/review-create-incorrect-rating.json")))
@@ -118,10 +118,10 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldPatchReview() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
-        String idPet = ((petRepository.save(new Pet(null, "Donald"))).getId()).toString();
-        Integer idSchedule = (scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId();
-        Integer idReview = (reviewRepository.save(new Review(null, null, idSchedule, LocalDateTime.now(clock), 5, 5, 5, 5, 5, "very good"))).getId();
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        String idPet = ((petRepository.save(new Pet("Donald"))).getId()).toString();
+        Integer idSchedule = (scheduleRepository.save(new Schedule(LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId();
+        Integer idReview = (reviewRepository.save(new Review(idSchedule, LocalDateTime.now(clock), 5, 5, 5, 5, 5, "very good"))).getId();
         mockMvc.perform(MockMvcRequestBuilders.patch("/schedule/review/{id}", idReview)
                 .contentType("application/json")
                 .content(fromResource("clinic/review/review-update.json")))
@@ -130,10 +130,10 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldPatchReviewIncorrectRating() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
-        String idPet = ((petRepository.save(new Pet(null, "Donald"))).getId()).toString();
-        Integer idSchedule = (scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId();
-        Integer idReview = (reviewRepository.save(new Review(null, null, idSchedule, LocalDateTime.now(clock), 5, 5, 5, 5, 5, "very good"))).getId();
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        String idPet = ((petRepository.save(new Pet("Donald"))).getId()).toString();
+        Integer idSchedule = (scheduleRepository.save(new Schedule(LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId();
+        Integer idReview = (reviewRepository.save(new Review(idSchedule, LocalDateTime.now(clock), 5, 5, 5, 5, 5, "very good"))).getId();
         mockMvc.perform(MockMvcRequestBuilders.patch("/schedule/review/{id}", idReview)
                 .contentType("application/json")
                 .content(fromResource("clinic/review/review-update-incorrect-rating.json")))
@@ -142,10 +142,10 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldPatchReviewNotFound() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor(null, "Alex", Arrays.asList("therapist")))).getId();
-        String idPet = ((petRepository.save(new Pet(null, "Donald"))).getId()).toString();
-        Integer idSchedule = (scheduleRepository.save(new Schedule(null, LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId();
-        Integer idReview = (reviewRepository.save(new Review(null, null, idSchedule, LocalDateTime.now(clock), 5, 5, 5, 5, 5, "very good"))).getId() + 1;
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        String idPet = ((petRepository.save(new Pet("Donald"))).getId()).toString();
+        Integer idSchedule = (scheduleRepository.save(new Schedule(LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId();
+        Integer idReview = (reviewRepository.save(new Review(idSchedule, LocalDateTime.now(clock), 5, 5, 5, 5, 5, "very good"))).getId() + 1;
         mockMvc.perform(MockMvcRequestBuilders.patch("/schedule/review/{id}", idReview)
                 .contentType("application/json")
                 .content(fromResource("clinic/review/review-update.json")))

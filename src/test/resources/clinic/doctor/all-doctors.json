@@ -1,14 +1,50 @@
-[
-  {
-    "name": "Jack",
-    "specializations": ["therapist"]
+{
+  "content": [
+    {
+
+      "name": "Jack",
+      "specializations": [
+        "therapist"
+      ]
+    },
+    {
+
+      "name": "Adam",
+      "specializations": [
+        "therapist"
+      ]
+    },
+    {
+
+      "name": "Alex",
+      "specializations": [
+        "surgeon"
+      ]
+    }
+  ],
+  "pageable": {
+    "sort": {
+      "sorted": false,
+      "unsorted": true,
+      "empty": true
+    },
+    "offset": 0,
+    "pageSize": 20,
+    "pageNumber": 0,
+    "paged": true,
+    "unpaged": false
   },
-  {
-    "name": "Adam",
-    "specializations": ["therapist"]
+  "totalElements": 3,
+  "totalPages": 1,
+  "last": true,
+  "number": 0,
+  "size": 20,
+  "sort": {
+    "sorted": false,
+    "unsorted": true,
+    "empty": true
   },
-  {
-    "name": "Alex",
-    "specializations": ["surgeon"]
-  }
-]
+  "numberOfElements": 3,
+  "first": true,
+  "empty": false
+}

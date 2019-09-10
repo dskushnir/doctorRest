@@ -23,5 +23,9 @@ public class Doctor {
     @ElementCollection(fetch = FetchType.EAGER)
     private List<String>specializations;
 
+    public Doctor(String name, List<String> specializations) {
+        this.name = name;
+        this.specializations = specializations;
+    }
 }
 

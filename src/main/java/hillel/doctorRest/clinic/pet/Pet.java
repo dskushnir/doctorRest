@@ -19,4 +19,8 @@ public class Pet {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
+
+    public Pet(String name) {
+        this.name = name;
+    }
 }

@@ -29,9 +29,8 @@ dependencies {
 	implementation "org.mapstruct:mapstruct:1.3.0.Final"
 	implementation 'org.flywaydb:flyway-core'
 	implementation 'org.springframework.retry:spring-retry'
+	compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
 	
-	
-
 //	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'org.postgresql:postgresql'
 

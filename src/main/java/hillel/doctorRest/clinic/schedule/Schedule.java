@@ -22,6 +22,13 @@ public class Schedule {
     private Integer doctorId;
     private String hour;
     private String petId;
+
+    public Schedule(LocalDate visitDate, Integer doctorId, String hour, String petId) {
+        this.visitDate = visitDate;
+        this.doctorId = doctorId;
+        this.hour = hour;
+        this.petId = petId;
+    }
 }
 
 
