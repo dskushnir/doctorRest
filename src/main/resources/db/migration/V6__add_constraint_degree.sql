@@ -1,0 +1,1 @@
+ALTER TABLE degree ADD CONSTRAINT degree_number_indication_educational_establishment_date_completion_of_study UNIQUE (degree_number,indication_educational_establishment,date_completion_of_study);

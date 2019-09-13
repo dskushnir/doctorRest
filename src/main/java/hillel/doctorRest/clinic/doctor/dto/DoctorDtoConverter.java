@@ -8,9 +8,10 @@ import org.mapstruct.MappingTarget;
 @Mapper
 public interface DoctorDtoConverter {
     @Mapping(target = "id", ignore = true)
-    Doctor toModel(DoctorInputDto dto);
+    Doctor toModel(Integer degreeNumber,DoctorInputDto dto);
     @Mapping(target = "id", ignore = true)
-    void update(@MappingTarget Doctor doctor, DoctorInputDto dto);
+    @Mapping(target = "degreeNumber",ignore = true)
+    void update(@MappingTarget Doctor doctor, DoctorInputDtoForUpdate dtoForUpdate);
 
 }
 

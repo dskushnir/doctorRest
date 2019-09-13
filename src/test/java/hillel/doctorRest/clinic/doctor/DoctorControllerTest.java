@@ -1,9 +1,12 @@
 package hillel.doctorRest.clinic.doctor;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import hillel.doctorRest.TestRunner;
 import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.After;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,9 @@ import java.util.Arrays;
 public class DoctorControllerTest {
     @Autowired
     MockMvc mockMvc;
+
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(8089);
     @Autowired
     DoctorRepository doctorRepository;
 
@@ -81,7 +87,9 @@ public class DoctorControllerTest {
 
     @Test
     public void shouldCreateDoctor() throws Exception {
-        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post("/doctors")
+
+        WireMock.stubFor(WireMock.get("/degrees/22222").willReturn(WireMock.okJson(fromResource("petclinic/info/workers.json"))));
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post("/doctors/{degreeNumber}",22222)
                 .contentType("application/json")
                 .content(fromResource("clinic/doctor/create-doctor.json")))
                 .andExpect(MockMvcResultMatchers.status().isCreated())
