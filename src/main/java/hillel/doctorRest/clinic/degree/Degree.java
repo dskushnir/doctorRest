@@ -17,7 +17,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 
 @Builder(toBuilder = true)
-
 @Entity
 public class Degree {
     @Id
@@ -27,5 +26,4 @@ public class Degree {
     private String indicationEducationalEstablishment;
     private String specialty;
     private LocalDate dateCompletionOfStudy;
-
 }

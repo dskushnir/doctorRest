@@ -24,9 +24,10 @@ public class Doctor {
     private List<String>specializations;
     private Integer degreeNumber;
 
-    public Doctor(String name, List<String> specializations) {
+    public Doctor(String name, List<String> specializations,Integer degreeNumber) {
         this.name = name;
         this.specializations = specializations;
+        this.degreeNumber =degreeNumber;
     }
 }
 

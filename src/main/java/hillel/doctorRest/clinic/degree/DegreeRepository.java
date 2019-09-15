@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface DegreeRepository extends JpaRepository<Degree,Integer> {
+public interface DegreeRepository extends JpaRepository<Degree, Integer> {
     Optional<Degree> findByDegreeNumber(Integer degreeNumber);
 }
 

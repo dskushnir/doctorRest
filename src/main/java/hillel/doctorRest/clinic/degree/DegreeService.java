@@ -9,10 +9,12 @@ import java.util.Optional;
 @AllArgsConstructor
 public class DegreeService {
     private final DegreeRepository degreeRepository;
-    public Optional<Degree> findByDegreeNumber (Integer degreeNumber){
+
+    public Optional<Degree> findByDegreeNumber(Integer degreeNumber) {
         return degreeRepository.findByDegreeNumber(degreeNumber);
     }
-    public Degree createDegree (Degree degree){
+
+    public Degree createDegree(Degree degree) {
         return degreeRepository.save(degree);
     }
 }

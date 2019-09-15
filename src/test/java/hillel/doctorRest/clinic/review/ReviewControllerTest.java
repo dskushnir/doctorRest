@@ -54,7 +54,7 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldReportReview() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist"), 140))).getId();
         String idPet1 = ((petRepository.save(new Pet("Donald"))).getId()).toString();
         String idPet2 = ((petRepository.save(new Pet("Tom"))).getId()).toString();
         Integer idSchedule1 = (scheduleRepository.save(new Schedule(LocalDate.of(2010, 1, 1), idDoctor, "8", idPet1))).getId();
@@ -74,7 +74,7 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldCreateReview() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist"), 141))).getId();
         String idPet = ((petRepository.save(new Pet("Donald"))).getId()).toString();
         Integer idSchedule = (scheduleRepository.save(new Schedule(LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId();
         mockMvc.perform(MockMvcRequestBuilders.post("/schedule/{scheduleId}/review", idSchedule)
@@ -85,7 +85,7 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldCreateReviewNotFoundVisit() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist"), 142))).getId();
         String idPet = ((petRepository.save(new Pet("Donald"))).getId()).toString();
         Integer idSchedule = (scheduleRepository.save(new Schedule(LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId() + 1;
         mockMvc.perform(MockMvcRequestBuilders.post("/schedule/{scheduleId}/review", idSchedule)
@@ -96,7 +96,7 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldCreateReviewIncorrectDate() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist"), 143))).getId();
         String idPet = ((petRepository.save(new Pet("Donald"))).getId()).toString();
         Integer idSchedule = (scheduleRepository.save(new Schedule(LocalDate.of(2020, 1, 1), idDoctor, "8", idPet))).getId();
         mockMvc.perform(MockMvcRequestBuilders.post("/schedule/{scheduleId}/review", idSchedule)
@@ -107,7 +107,7 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldCreateReviewIncorrectRating() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist"), 144))).getId();
         String idPet = ((petRepository.save(new Pet("Donald"))).getId()).toString();
         Integer idSchedule = (scheduleRepository.save(new Schedule(LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId();
         mockMvc.perform(MockMvcRequestBuilders.post("/schedule/{scheduleId}/review", idSchedule)
@@ -118,7 +118,7 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldPatchReview() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist"), 145))).getId();
         String idPet = ((petRepository.save(new Pet("Donald"))).getId()).toString();
         Integer idSchedule = (scheduleRepository.save(new Schedule(LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId();
         Integer idReview = (reviewRepository.save(new Review(idSchedule, LocalDateTime.now(clock), 5, 5, 5, 5, 5, "very good"))).getId();
@@ -130,7 +130,7 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldPatchReviewIncorrectRating() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist"), 146))).getId();
         String idPet = ((petRepository.save(new Pet("Donald"))).getId()).toString();
         Integer idSchedule = (scheduleRepository.save(new Schedule(LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId();
         Integer idReview = (reviewRepository.save(new Review(idSchedule, LocalDateTime.now(clock), 5, 5, 5, 5, 5, "very good"))).getId();
@@ -142,7 +142,7 @@ public class ReviewControllerTest {
 
     @Test
     public void shouldPatchReviewNotFound() throws Exception {
-        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist")))).getId();
+        Integer idDoctor = (doctorRepository.save(new Doctor("Alex", Arrays.asList("therapist"), 147))).getId();
         String idPet = ((petRepository.save(new Pet("Donald"))).getId()).toString();
         Integer idSchedule = (scheduleRepository.save(new Schedule(LocalDate.of(2010, 1, 1), idDoctor, "8", idPet))).getId();
         Integer idReview = (reviewRepository.save(new Review(idSchedule, LocalDateTime.now(clock), 5, 5, 5, 5, 5, "very good"))).getId() + 1;

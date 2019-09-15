@@ -50,8 +50,8 @@ public class ScheduleService {
                                                                 String hour) {
         return scheduleRepository.findByDoctorIdAndVisitDateAndHour(doctorId, visitDate, hour);
     }
-    @Transactional(rollbackFor = Exception.class)
-    public void swapListDoctors(LocalDate visitDate, Integer doctor1Id, Integer doctor2Id) throws Exception {
+    @Transactional
+    public void swapListDoctors(LocalDate visitDate, Integer doctor1Id, Integer doctor2Id)  {
         val scheduleDoctor1 = findByDoctorIdAndVisitDate(doctor1Id, visitDate);
         val scheduleDoctor2 = findByDoctorIdAndVisitDate(doctor2Id, visitDate);
         val hoursDoctor1 = scheduleDoctor1.stream().map(Schedule::getHour).collect(Collectors.toList());
