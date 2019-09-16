@@ -88,7 +88,16 @@ public class DoctorControllerTest {
                 .content(fromResource("clinic/doctor/create-doctor-specialization-empty.json")))
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
-
+    @Test
+    public void shouldCreateDoctorNotFoundDegree() throws Exception {
+        WireMock.stubFor(WireMock.get("/degrees/2").willReturn(WireMock.notFound()));
+        MockHttpServletResponse response = mockMvc.perform(MockMvcRequestBuilders.post("/doctors/{degreeNumber}", 2)
+                .contentType("application/json")
+                .content(fromResource("clinic/doctor/create-doctor.json")))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andReturn().getResponse();
+    }
+    
     @Test
     public void shouldCreateDoctor() throws Exception {
         WireMock.stubFor(WireMock.get("/degrees/22222").willReturn(WireMock.okJson(fromResource("clinic/degree/degree-inputDto.json"))));
