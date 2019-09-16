@@ -105,9 +105,9 @@ public class DoctorController {
             val created = doctorService.createDoctor(doctorDtoConverter.toModel(degreeNumber, doctorInputDto));
             log.debug("Doctor service create doctor: {}", created);
             return ResponseEntity.created(uriBuilder.build(created.getId())).build();
-        } catch (DegreeNotFoundException e) {
+        } catch (Exception e) {
             log.error("Call  to degree service finished  exceptionally", e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
