@@ -16,6 +16,7 @@ clinic:
       - 13
       - 14
       - 15
+  degree-url: "http://localhost:8081"
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -32,6 +33,11 @@ spring:
     open-in-view: false
     hibernate:
       ddl-auto: validate
-logging:
-  level:
-    sql: debug
+logging.level:
+  sql: debug
+  org.springframework.web.client: debug
+---
+spring.profiles: test
+clinic:
+  degree-url: "http://localhost:8089"
+#...

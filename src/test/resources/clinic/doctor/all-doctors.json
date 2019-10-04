@@ -5,21 +5,24 @@
       "name": "Jack",
       "specializations": [
         "therapist"
-      ]
+      ],
+      "degreeNumber": 33310
     },
     {
 
       "name": "Adam",
       "specializations": [
         "therapist"
-      ]
+      ],
+      "degreeNumber": 33311
     },
     {
 
       "name": "Alex",
       "specializations": [
         "surgeon"
-      ]
+      ],
+      "degreeNumber": 33312
     }
   ],
   "pageable": {

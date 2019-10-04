@@ -9,4 +9,5 @@ public class DoctorOutputDto {
     private Integer id;
     private String name;
     private List<String> specializations;
+    private Integer degreeNumber;
 }
